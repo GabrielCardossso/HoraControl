@@ -1,0 +1,147 @@
+.corpo-config-page {
+    font-family: Arial, sans-serif;
+    background-color: #4B4799;
+    margin: 0;
+    display: grid;
+    height: 100vh;
+}
+
+.corpo-config-page::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 140%;
+    height: 100%;
+    background-image: url("../img/Fundo(1).png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.container-config-page {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar-config-page {
+    background-color: #e1e1e1;
+    width: 230px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 50px;
+    padding-left: 15px;
+    box-sizing: border-box;
+}
+
+.item-menu-config-page {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    color: #333;
+    cursor: pointer;
+    width: 100%;
+}
+
+.item-menu-config-page.active-config-page {
+    border-left: 4px solid #4B4799;
+    padding-left: 5px;
+}
+
+.item-menu-config-page span {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.item-menu-config-page img {
+    width: 40px;
+    height: 40px;
+    transition: filter 0.3s ease;
+}
+
+.item-menu-config-page:hover img {
+    filter: invert(28%) sepia(90%) saturate(400%) hue-rotate(220deg) brightness(95%) contrast(90%);
+}
+
+.main-config-page {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.header-config-page {
+    color: white;
+    margin-bottom: 25px;
+}
+.header-config-page h2 { margin: 0 0 5px 0; font-size: 32px; }
+.header-config-page p { margin: 0; opacity: 0.8; }
+
+.container-bloco-config-page {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    text-align: left;
+}
+
+.container-bloco-config-page h1 {
+    font-size: 28px;
+    color: black;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #f4f4f4;
+    padding-bottom: 10px;
+}
+
+.secao-box-config {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+.secao-box-config h3 { margin-top: 0; margin-bottom: 15px; font-size: 18px; color: #4B4799; }
+.grupo-input-config { margin-bottom: 15px; }
+
+.grupo-input-config label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #444;
+}
+
+.grupo-input-config input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+.grupo-input-config input[readonly] { background-color: #f5f5f5; color: #777; cursor: not-allowed; }
+
+.checkbox-row-config { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.checkbox-row-config input { width: 18px; height: 18px; cursor: pointer; }
+.checkbox-row-config label { font-size: 15px; color: #444; cursor: pointer; }
+
+.submit-row-config { text-align: right; margin-top: 20px; }
+
+.btn-salvar-config-page {
+    padding: 12px 24px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.btn-salvar-config-page:hover { background-color: #43a047; }

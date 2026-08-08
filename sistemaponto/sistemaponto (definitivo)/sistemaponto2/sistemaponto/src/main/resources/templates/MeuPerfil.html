@@ -1,0 +1,116 @@
+<!doctype html>
+<html xmlns:th="http://thymeleaf.org" lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu Perfil - Painel do Professor</title>
+    <!-- Link dinâmico mapeado para a pasta correta do seu projeto -->
+    <link rel="stylesheet" th:href="@{/css/MeuPerfil.css}">
+  </head>
+
+  <body class="corpo-perfil-page">
+    <div class="container-perfil-page">
+      
+      <!-- Sidebar com links de navegação mantidos do Thymeleaf -->
+      <div class="sidebar-perfil-page">
+        <a th:href="@{/perfil}" style="text-decoration: none; color: inherit; width: 100%;">
+          <div class="item-menu-perfil-page active-perfil-page">
+            <img th:src="@{/img/Perfil.png}" alt="Meu Perfil" />
+            <span>Meu Perfil</span>
+          </div>
+        </a>
+        
+        <a th:href="@{/ponto}" style="text-decoration: none; color: inherit; width: 100%;">
+          <div class="item-menu-perfil-page">
+            <img th:src="@{/img/CartãoPonto.png}" alt="Meu Ponto" />
+            <span>Meu Ponto</span>
+          </div>
+        </a>
+        
+        <a th:href="@{/configuracoes}" style="text-decoration: none; color: inherit; width: 100%;">
+          <div class="item-menu-perfil-page">
+            <img th:src="@{/img/Engrenagem.png}" alt="Configurações" />
+            <span>Configurações</span>
+          </div>
+        </a>
+
+        <!-- Logout seguro adequado para o Spring Security -->
+        <form th:action="@{/logout}" method="POST" style="display: inline; width: 100%; margin-top: auto;">
+          <button type="submit" class="item-menu-perfil-page" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; padding: 12px 0;">
+            <span style="color: #ef4444; font-weight: bold; margin-left: 10px;">Sair</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Conteúdo principal -->
+      <div class="main-perfil-page">
+        <!-- Cabeçalho -->
+        <div class="header-perfil-page">
+          <div class="boas-vindas-perfil-page">
+            <h2>Olá, Prof. Alisson!</h2>
+            <p>Seja bem-vindo ao seu painel de controle escolar.</p>
+          </div>
+          <div class="data-perfil-page" id="dataRelogio">
+            Carregando data...
+          </div>
+        </div>
+
+        <!-- Cards Informativos -->
+        <div class="cards-grid-perfil-page">
+          <div class="card-item-perfil-page">
+            <button id="btnCadastrar" class="btn-ponto-page-topo">Registrar Ponto</button>
+          </div>
+
+          <!-- Box de Seleção de Tarefas Dinâmico -->
+          <div class="card-item-perfil-page card-tarefa-destaque-perfil">
+            <h3>Turma / Tarefa</h3>
+            <select id="selecaoTarefa" class="select-perfil-page">
+              <option value="Aula Normal">Aula Normal</option>
+              <option value="Atividade Extra">Atividade Extra</option>
+            </select>
+
+            <!-- Sub-opções dinâmicas para Aula Normal -->
+            <div id="containerSubTarefa" class="sub-tarefa-box-perfil">
+              <select id="selecaoSubTarefa" class="select-perfil-page subselect-color-perfil">
+                <option value="Jovem Programador">Jovem Programador</option>
+                <option value="Técnico">Técnico</option>
+              </select>
+            </div>
+
+            <!-- Campo de digitação de Título Extra -->
+            <div id="containerTituloExtra" class="sub-tarefa-box-perfil" style="display: none">
+              <input type="text" id="txtTituloExtra" placeholder="Título da atividade extra..." class="input-perfil-page" />
+            </div>
+
+            <span>Selecione ou digite antes de registrar</span>
+          </div>
+
+          <!-- Box de Registros com histórico dinâmico -->
+          <div class="card-item-perfil-page alerta-perfil-page">
+            <h3>Registros</h3>
+            <div class="lista-pendencias-perfil">
+              <!-- Renderizado integralmente e de forma dinâmica pelo JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco de Conteúdo Inferior -->
+        <div class="container-bloco-perfil-page">
+          <h1 id="tituloBloco">Minha Grade de Hoje</h1>
+
+          <div class="wrapper-conteudo-perfil">
+            <textarea id="txtAnotacoes" placeholder="Digite as anotações e os detalhes das suas atividades aqui..." class="textarea-perfil-page"></textarea>
+
+            <div class="botoes-row-perfil-page">
+              <button id="btnSalvarAnotacoes" class="btn-acao-perfil-page">Salvar Anotações</button>
+              <button id="btnIrParaPonto" class="btn-acao-perfil-page">Ir para o Registro de Ponto</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script integrado do Thymeleaf -->
+    <script th:src="@{/js/MeuPerfil.js}"></script>
+  </body>
+</html>

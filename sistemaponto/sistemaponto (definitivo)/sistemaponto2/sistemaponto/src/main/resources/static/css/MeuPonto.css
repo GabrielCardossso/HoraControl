@@ -1,0 +1,217 @@
+.corpo-ponto-page {
+    font-family: Arial, sans-serif;
+    background-color: #4B4799;
+    margin: 0;
+    display: flex; /* FIX: Mudado de grid para flex para alinhar lado a lado com a sidebar */
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; /* Evita que a tela inteira role */
+}
+
+.corpo-ponto-page::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; /* FIX: Corrigido de 140% para 100% para evitar scroll horizontal quebrado */
+    height: 100%;
+    background-image: url("../img/Fundo(1).png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.container-ponto-page {
+    display: flex;
+    flex-direction: row; /* Força os elementos (Sidebar e Conteúdo) a ficarem lado a lado */
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-ponto-page {
+    background-color: #e1e1e1;
+    width: 230px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 50px;
+    padding-left: 15px;
+    box-sizing: border-box;
+    flex-shrink: 0; /* FIX CRÍTICO: Impede que a tabela empurre a barra lateral para fora da tela */
+}
+
+.item-menu-ponto-page {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    color: #333;
+    cursor: pointer;
+    width: 100%;
+}
+
+.item-menu-ponto-page.active-ponto-page {
+    border-left: 4px solid #4B4799;
+    padding-left: 5px;
+}
+
+.item-menu-ponto-page span {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.item-menu-ponto-page img {
+    width: 40px;
+    height: 40px;
+    transition: filter 0.3s ease;
+}
+
+.item-menu-ponto-page:hover img {
+    filter: invert(28%) sepia(90%) saturate(400%) hue-rotate(220deg) brightness(95%) contrast(90%);
+}
+
+.main-ponto-page {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.container-bloco-ponto-page {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.container-bloco-ponto-page h1 {
+    font-size: 42px;
+    color: black;
+    font-weight: 700;
+    margin: 0 0 25px 0;
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.filtros-box-ponto {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.filtros-box-ponto input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.tabela-ponto-page {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.tabela-ponto-page th, 
+.tabela-ponto-page td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle; 
+}
+
+.tabela-ponto-page th {
+    background-color: #f4f4f4;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Botão Ver Mais (Substituindo o antigo botão de PDF) */
+.btn-tabela-ver-mais {
+    display: inline-block;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #4B4799;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 3px 8px rgba(75, 71, 153, 0.2);
+}
+
+.btn-tabela-ver-mais:hover {
+    background-color: #3a357c;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(75, 71, 153, 0.3);
+}
+
+/* Fundo escurecido da Mini Aba (Modal) */
+.modal-anotacoes-container {
+    display: none; /* Controlado via JS */
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+/* Caixa de conteúdo da Mini Aba */
+.modal-anotacoes-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 420px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+    position: relative;
+    animation: abrirModal 0.25s ease-out;
+    box-sizing: border-box;
+}
+
+.modal-anotacoes-content h3 {
+    margin-top: 0;
+    color: #4B4799;
+    border-bottom: 2px solid #f4f4f4;
+    padding-bottom: 10px;
+}
+
+#modalTextoAnotacao {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.5;
+    word-wrap: break-word;
+    white-space: pre-wrap; /* Mantém as quebras de linha digitadas */
+}
+
+/* Botão de Fechar (X) */
+.modal-anotacoes-close {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.modal-anotacoes-close:hover {
+    color: #333;
+}
+
+@keyframes abrirModal {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

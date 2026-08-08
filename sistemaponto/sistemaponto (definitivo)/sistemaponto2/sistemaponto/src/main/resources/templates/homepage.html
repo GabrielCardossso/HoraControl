@@ -1,0 +1,62 @@
+<!doctype html>
+<html xmlns:th="http://thymeleaf.org" lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/homepage.css}">
+  </head>
+
+  <body class="corpo-login-page">
+    <div class="wrapper-login-page">
+      <div class="motivational-login-page">
+        <p class="text-motiv-login"></p>
+      </div>
+
+      <div class="row-box-login">
+        <div class="side-image-login-page"></div>
+
+        <div class="card-box-login">
+          <img
+            th:src="@{/img/b0091c4a-e98d-4afa-8cb6-fda9ae1fe25f.png}"
+              alt="Logo"
+                class="logo-login-page"
+        />
+
+          <!-- CONTAINER DO FORMULÁRIO -->
+          <div class="form-login-page">
+            
+            <!-- CORRIGIDO: Agora envia os dados para a URL correta do Spring Security -->
+            <form th:action="@{/login}" method="POST">
+              
+              <!-- Campo de e-mail mapeado como username -->
+              <input 
+                type="email" 
+                name="username" 
+                placeholder="E-mail" 
+                class="input-login-page" 
+                required 
+              />
+              
+              <!-- Campo de senha -->
+              <input 
+                type="password" 
+                name="password" 
+                placeholder="Senha" 
+                class="input-login-page" 
+                required 
+              />
+              
+              <a href="#" class="forgot-link-login">Esqueci minha senha</a>
+              
+              <!-- Botão que dispara o envio das credenciais -->
+              <button type="submit" class="btn-submit-login">Entrar</button>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

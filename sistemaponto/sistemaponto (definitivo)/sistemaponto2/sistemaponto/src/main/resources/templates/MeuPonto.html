@@ -1,0 +1,87 @@
+<!doctype html>
+<html xmlns:th="http://thymeleaf.org" lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestão de Meu Ponto</title>
+    <!-- Link dinâmico mapeado para a pasta correta do Spring Boot -->
+    <link rel="stylesheet" th:href="@{/css/MeuPonto.css}">
+  </head>
+
+  <body class="corpo-ponto-page">
+    <div class="container-ponto-page">
+      
+      <!-- Sidebar com rotas e links dinâmicos do Thymeleaf -->
+      <div class="sidebar-ponto-page">
+        <a th:href="@{/perfil}" style="text-decoration: none; color: inherit; width: 100%;">
+          <div class="item-menu-ponto-page">
+            <img th:src="@{/img/Perfil.png}" alt="Meu Perfil" />
+            <span>Meu Perfil</span>
+          </div>
+        </a>
+        
+        <a th:href="@{/ponto}" style="text-decoration: none; color: inherit; width: 100%;">
+          <div class="item-menu-ponto-page active-ponto-page">
+            <img th:src="@{/img/CartãoPonto.png}" alt="Meu Ponto" />
+            <span>Meu Ponto</span>
+          </div>
+        </a>
+        
+        <a th:href="@{/configuracoes}" style="text-decoration: none; color: inherit; width: 100%;">
+          <div class="item-menu-ponto-page">
+            <img th:src="@{/img/Engrenagem.png}" alt="Configurações" />
+            <span>Configurações</span>
+          </div>
+        </a>
+
+        <!-- Logout seguro adequado para o Spring Security -->
+        <form th:action="@{/logout}" method="POST" style="display: inline; width: 100%; margin-top: auto;">
+          <button type="submit" class="item-menu-ponto-page" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; padding: 12px 0;">
+            <span style="color: #ef4444; font-weight: bold; margin-left: 10px;">Sair</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Conteúdo principal -->
+      <div class="main-ponto-page">
+        <div class="container-bloco-ponto-page">
+          <h1>Gestão de Meu Ponto</h1>
+
+          <!-- Input de Filtros de pesquisa integrado -->
+          <div class="filtros-box-ponto">
+            <input type="text" id="filtro" placeholder="Buscar por data, turma ou atividade" />
+          </div>
+
+          <!-- TABELA AJUSTADA CONFORME SEU PEDIDO -->
+          <table id="tabelaLembrete" class="tabela-ponto-page">
+            <thead>
+              <tr>
+                <th>Tipo de Registro</th>
+                <th>Data</th>
+                <th>hr Entrada / hr Saída</th>
+                <th>Turma / Tarefa</th>
+                <th>Status</th>
+                <th>Anotações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Renderizado integralmente e de forma dinâmica pelo JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTRUTURA DA MINI ABA (MODAL) PARA MOSTRAR A OBSERVAÇÃO -->
+    <div id="modalAnotacoes" class="modal-anotacoes-container">
+      <div class="modal-anotacoes-content">
+        <span class="modal-anotacoes-close">&times;</span>
+        <h3>Observações do Registro</h3>
+        <p id="modalTextoAnotacao">Nenhuma observação informada.</p>
+      </div>
+    </div>
+
+    <!-- Script JavaScript mapeado no contexto static -->
+    <script th:src="@{/js/MeuPonto.js}"></script>
+  </body>
+</html>
