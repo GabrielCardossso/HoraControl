@@ -2,10 +2,10 @@
     font-family: Arial, sans-serif;
     background-color: #4B4799;
     margin: 0;
-    display: flex; /* FIX: Mudado de grid para flex para alinhar lado a lado com a sidebar */
+    display: flex;
     height: 100vh;
     width: 100vw;
-    overflow: hidden; /* Evita que a tela inteira role */
+    overflow: hidden;
 }
 
 .corpo-ponto-page::before {
@@ -13,7 +13,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%; /* FIX: Corrigido de 140% para 100% para evitar scroll horizontal quebrado */
+    width: 100%;
     height: 100%;
     background-image: url("../img/Fundo(1).png");
     background-size: cover;
@@ -26,7 +26,7 @@
 
 .container-ponto-page {
     display: flex;
-    flex-direction: row; /* Força os elementos (Sidebar e Conteúdo) a ficarem lado a lado */
+    flex-direction: row;
     width: 100%;
     height: 100vh;
     position: relative;
@@ -43,7 +43,7 @@
     padding-top: 50px;
     padding-left: 15px;
     box-sizing: border-box;
-    flex-shrink: 0; /* FIX CRÍTICO: Impede que a tabela empurre a barra lateral para fora da tela */
+    flex-shrink: 0;
 }
 
 .item-menu-ponto-page {
@@ -100,20 +100,6 @@
     border-bottom: 1px solid #ddd;
 }
 
-.filtros-box-ponto {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.filtros-box-ponto input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-
 .tabela-ponto-page {
     width: 100%;
     border-collapse: collapse;
@@ -134,7 +120,15 @@
     font-weight: bold;
 }
 
-/* Botão Ver Mais (Substituindo o antigo botão de PDF) */
+/* Customização visual das caixas de marcação na tabela */
+.tabela-ponto-page input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: #4B4799; /* Aplica a cor roxa do sistema no preenchimento */
+}
+
+/* Botão Ver Mais */
 .btn-tabela-ver-mais {
     display: inline-block;
     padding: 8px 20px;
@@ -155,9 +149,15 @@
     box-shadow: 0 5px 12px rgba(75, 71, 153, 0.3);
 }
 
-/* Fundo escurecido da Mini Aba (Modal) */
+/* Hover e foco estilizados no botão verde de relatórios em lote */
+#btnGerarRelatorio:hover {
+    background-color: #146c43 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(25, 135, 84, 0.35) !important;
+}
+
 .modal-anotacoes-container {
-    display: none; /* Controlado via JS */
+    display: none;
     position: fixed;
     z-index: 9999;
     left: 0;
@@ -167,9 +167,9 @@
     background-color: rgba(0, 0, 0, 0.5);
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
 }
 
-/* Caixa de conteúdo da Mini Aba */
 .modal-anotacoes-content {
     background-color: white;
     padding: 25px;
@@ -191,12 +191,12 @@
 #modalTextoAnotacao {
     font-size: 15px;
     color: #333;
-    line-height: 1.5;
+    line-height: 1.6;
     word-wrap: break-word;
-    white-space: pre-wrap; /* Mantém as quebras de linha digitadas */
+    white-space: pre-wrap;
+    margin: 15px 0 5px 0;
 }
 
-/* Botão de Fechar (X) */
 .modal-anotacoes-close {
     position: absolute;
     top: 12px;
@@ -212,6 +212,6 @@
 }
 
 @keyframes abrirModal {
-    from { transform: scale(0.8); opacity: 0; }
+    from { transform: scale(0.85); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }

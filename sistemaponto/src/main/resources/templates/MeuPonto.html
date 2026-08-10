@@ -47,15 +47,45 @@
         <div class="container-bloco-ponto-page">
           <h1>Gestão de Meu Ponto</h1>
 
-          <!-- Input de Filtros de pesquisa integrado -->
-          <div class="filtros-box-ponto">
-            <input type="text" id="filtro" placeholder="Buscar por data, turma ou atividade" />
+          <!-- PAINEL DE FILTROS AVANÇADOS COMBINADOS -->
+          <div class="filtros-box-ponto" style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+            
+            <!-- Filtro por Tipo de Registro / Função -->
+            <div style="flex: 1; min-width: 150px;">
+              <label for="filtroTipo" style="font-size: 12px; font-weight: bold; color: #666; display: block; margin-bottom: 5px;">Função / Tipo</label>
+              <select id="filtroTipo" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; background: white; outline: none;">
+                <option value="">Todos</option>
+                <option value="Aula Normal">Aula Normal</option>
+                <option value="Atividade Extra">Atividade Extra</option>
+              </select>
+            </div>
+
+            <!-- Filtro por Data Exata -->
+            <div style="flex: 1; min-width: 150px;">
+              <label for="filtroData" style="font-size: 12px; font-weight: bold; color: #666; display: block; margin-bottom: 5px;">Data do Ponto</label>
+              <input type="date" id="filtroData" style="width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; outline: none; box-sizing: border-box;" />
+            </div>
+
+            <!-- Filtro por Nome da Turma / Tarefa -->
+            <div style="flex: 2; min-width: 250px;">
+              <label for="filtroTarefa" style="font-size: 12px; font-weight: bold; color: #666; display: block; margin-bottom: 5px;">Buscar Turma / Aula</label>
+              <input type="text" id="filtroTarefa" placeholder="Digite o nome da turma ou atividade..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; outline: none; box-sizing: border-box;" />
+            </div>
+
+            <!-- Botões de Ação do Painel -->
+            <div style="display: flex; gap: 10px; align-items: flex-end;">
+              <button id="btnLimparFiltros" style="padding: 10px 15px; background-color: #f4f4f4; border: 1px solid #ccc; border-radius: 8px; font-weight: bold; cursor: pointer; color: #333; height: 41px; transition: background 0.2s;"></button>Limpar</button>
+              
+              <!-- Botão Gerar Relatório Combinado das Linhas Selecionadas -->
+              <button id="btnGerarRelatorio" style="padding: 10px 20px; background-color: #198754; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; height: 41px; box-shadow: 0 4px 10px rgba(25, 135, 84, 0.2); transition: all 0.2s;">Relatório</button>
+            </div>
           </div>
 
-          <!-- TABELA AJUSTADA CONFORME SEU PEDIDO -->
+          <!-- TABELA DE REGISTROS COM CHECKBOXES -->
           <table id="tabelaLembrete" class="tabela-ponto-page">
             <thead>
               <tr>
+                <th style="width: 40px; text-align: center;"><input type="checkbox" id="selecionarTodos" /></th>
                 <th>Tipo de Registro</th>
                 <th>Data</th>
                 <th>hr Entrada / hr Saída</th>
@@ -65,7 +95,7 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Renderizado integralmente e de forma dinâmica pelo JS -->
+              <!-- Renderizado dinamicamente pelo JS -->
             </tbody>
           </table>
         </div>

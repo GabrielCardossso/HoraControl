@@ -14,37 +14,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Controla dinamicamente o estado visual do botão (Texto e Cor)
     function atualizarBotaoPonto() {
-        if (!btnCadastrar) return;
+    if (!btnCadastrar) return;
 
-        let nomeTarefa = "";
-        const tipoRegistro = selecaoTarefa ? selecaoTarefa.value : 'Aula Normal';
+    let nomeTarefa = "";
+    const tipoRegistro = selecaoTarefa
+        ? selecaoTarefa.value
+        : "Aula Normal";
 
-        if (tipoRegistro === 'Aula Normal') {
-            nomeTarefa = selecaoSubTarefa ? selecaoSubTarefa.value : 'Sem tarefa';
-        } else {
-            nomeTarefa = txtTituloExtra ? txtTituloExtra.value.trim() : 'Atividade Extra';
-            if (!nomeTarefa) {
-                nomeTarefa = 'Atividade Extra';
-            }
-        }
+    if (tipoRegistro === "Aula Normal") {
+        nomeTarefa = selecaoSubTarefa
+            ? selecaoSubTarefa.value
+            : "Sem tarefa";
+    } else {
+        nomeTarefa = txtTituloExtra
+            ? txtTituloExtra.value.trim()
+            : "Atividade Extra";
 
-        let pontosAtuais = JSON.parse(localStorage.getItem('meus_pontos')) || [];
-
-        const pontoAberto = pontosAtuais.find(p =>
-            p &&
-            p.entrada &&
-            p.tarefa === nomeTarefa &&
-            (p.status === "Pendente" || p.status === "🟡 Pendente")
-        );
-
-        if (pontoAberto) {
-            btnCadastrar.textContent = "Fechar Ponto";
-            btnCadastrar.style.backgroundColor = "#ef4444"; // Vermelho para indicar fechamento
-        } else {
-            btnCadastrar.textContent = "Registrar Ponto";
-            btnCadastrar.style.backgroundColor = "#2196f3"; // Azul padrão do sistema
+        if (!nomeTarefa) {
+            nomeTarefa = "Atividade Extra";
         }
     }
+
+    let pontosAtuais =
+        JSON.parse(localStorage.getItem("meus_pontos")) || [];
+
+    const pontoAberto = pontosAtuais.find(p =>
+        p &&
+        p.entrada &&
+        p.tarefa === nomeTarefa &&
+        (
+            p.status === "Pendente" ||
+            p.status === "🟡 Pendente"
+        )
+    );
+
+    if (pontoAberto) {
+        btnCadastrar.textContent = "Fechar Ponto";
+
+        // Adiciona a classe vermelha
+        btnCadastrar.classList.add("ponto-aberto");
+    } else {
+        btnCadastrar.textContent = "Registrar Ponto";
+
+        // Remove a classe vermelha
+        btnCadastrar.classList.remove("ponto-aberto");
+    }
+}
 
     // Carrega anotações salvas com segurança se o elemento existir
     if (txtAnotacoes && localStorage.getItem('anotacoesProfessor')) {
