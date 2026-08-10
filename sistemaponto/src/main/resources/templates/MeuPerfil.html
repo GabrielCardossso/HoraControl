@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meu Perfil - Painel do Professor</title>
-    <!-- Link dinâmico mapeado para a pasta correta do seu projeto -->
+    <!-- Link dinâmico para a pasta static do Spring Boot -->
     <link rel="stylesheet" th:href="@{/css/MeuPerfil.css}">
   </head>
 
   <body class="corpo-perfil-page">
     <div class="container-perfil-page">
       
-      <!-- Sidebar com links de navegação mantidos do Thymeleaf -->
+      <!-- Sidebar de Navegação Lateral -->
       <div class="sidebar-perfil-page">
         <a th:href="@{/perfil}" style="text-decoration: none; color: inherit; width: 100%;">
           <div class="item-menu-perfil-page active-perfil-page">
@@ -44,10 +44,11 @@
 
       <!-- Conteúdo principal -->
       <div class="main-perfil-page">
+        
         <!-- Cabeçalho -->
         <div class="header-perfil-page">
           <div class="boas-vindas-perfil-page">
-            <h2>Olá, Prof. Alisson!</h2>
+            <h2>Olá, Prof. Vanessa!</h2>
             <p>Seja bem-vindo ao seu painel de controle escolar.</p>
           </div>
           <div class="data-perfil-page" id="dataRelogio">
@@ -55,15 +56,13 @@
           </div>
         </div>
 
-        <!-- Cards Informativos -->
+        <!-- Cards Informativos (Configurado para 2 Cubos Lado a Lado) -->
         <div class="cards-grid-perfil-page">
-          <div class="card-item-perfil-page">
-            <button id="btnCadastrar" class="btn-ponto-page-topo">Registrar Ponto</button>
-          </div>
 
-          <!-- Box de Seleção de Tarefas Dinâmico -->
+          <!-- CUBO 1: Box de Seleção de Tarefas com Botão de Registro Acoplado -->
           <div class="card-item-perfil-page card-tarefa-destaque-perfil">
             <h3>Turma / Tarefa</h3>
+            
             <select id="selecaoTarefa" class="select-perfil-page">
               <option value="Aula Normal">Aula Normal</option>
               <option value="Atividade Extra">Atividade Extra</option>
@@ -82,19 +81,23 @@
               <input type="text" id="txtTituloExtra" placeholder="Título da atividade extra..." class="input-perfil-page" />
             </div>
 
-            <span>Selecione ou digite antes de registrar</span>
+            <span style="margin-bottom: 15px; display: block;">Selecione ou digite antes de registrar</span>
+            
+            <!-- Botão de Registrar Ponto movido para a base interna do cubo -->
+            <button id="btnCadastrar" class="btn-ponto-page-topo" style="width: 100%; margin-top: auto;">Registrar Ponto</button>
           </div>
 
-          <!-- Box de Registros com histórico dinâmico -->
+          <!-- CUBO 2: Box de Histórico de Últimos Registros -->
           <div class="card-item-perfil-page alerta-perfil-page">
             <h3>Registros</h3>
             <div class="lista-pendencias-perfil">
-              <!-- Renderizado integralmente e de forma dinâmica pelo JS -->
+              <!-- Renderizado dinamicamente via JS -->
             </div>
           </div>
+
         </div>
 
-        <!-- Bloco de Conteúdo Inferior -->
+        <!-- Bloco de Conteúdo Inferior (Anotações) -->
         <div class="container-bloco-perfil-page">
           <h1 id="tituloBloco">Minha Grade de Hoje</h1>
 
@@ -102,15 +105,14 @@
             <textarea id="txtAnotacoes" placeholder="Digite as anotações e os detalhes das suas atividades aqui..." class="textarea-perfil-page"></textarea>
 
             <div class="botoes-row-perfil-page">
-              <button id="btnSalvarAnotacoes" class="btn-acao-perfil-page">Salvar Anotações</button>
-              <button id="btnIrParaPonto" class="btn-acao-perfil-page">Ir para o Registro de Ponto</button>
+              <button id="btnSalvarAnotacoes" class="btn-acao-perfil-page"> Salvar Anotações</button>
+              <button id="btnIrParaPonto" class="btn-acao-perfil-page"> Ir para o Registro de Ponto</button>
             </div>
           </div>
         </div>
+
       </div>
     </div>
-
-    <!-- Script integrado do Thymeleaf -->
     <script th:src="@{/js/MeuPerfil.js}"></script>
   </body>
 </html>

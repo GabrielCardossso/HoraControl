@@ -12,6 +12,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCadastrar = document.getElementById('btnCadastrar');
     const listaPendencias = document.querySelector('.lista-pendencias-perfil');
 
+    // Controla dinamicamente o estado visual do botão (Texto e Cor)
+    function atualizarBotaoPonto() {
+        if (!btnCadastrar) return;
+
+        let nomeTarefa = "";
+        const tipoRegistro = selecaoTarefa ? selecaoTarefa.value : 'Aula Normal';
+
+        if (tipoRegistro === 'Aula Normal') {
+            nomeTarefa = selecaoSubTarefa ? selecaoSubTarefa.value : 'Sem tarefa';
+        } else {
+            nomeTarefa = txtTituloExtra ? txtTituloExtra.value.trim() : 'Atividade Extra';
+            if (!nomeTarefa) {
+                nomeTarefa = 'Atividade Extra';
+            }
+        }
+
+        let pontosAtuais = JSON.parse(localStorage.getItem('meus_pontos')) || [];
+
+        const pontoAberto = pontosAtuais.find(p =>
+            p &&
+            p.entrada &&
+            p.tarefa === nomeTarefa &&
+            (p.status === "Pendente" || p.status === "🟡 Pendente")
+        );
+
+        if (pontoAberto) {
+            btnCadastrar.textContent = "Fechar Ponto";
+            btnCadastrar.style.backgroundColor = "#ef4444"; // Vermelho para indicar fechamento
+        } else {
+            btnCadastrar.textContent = "Registrar Ponto";
+            btnCadastrar.style.backgroundColor = "#2196f3"; // Azul padrão do sistema
+        }
+    }
+
     // Carrega anotações salvas com segurança se o elemento existir
     if (txtAnotacoes && localStorage.getItem('anotacoesProfessor')) {
         txtAnotacoes.value = localStorage.getItem('anotacoesProfessor');
@@ -19,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     restaurarEstadoSeletores();
     carregarPontosNaTela();
+    atualizarBotaoPonto(); // Checagem inicial ao carregar a página
 
     function alternarModoVisao() {
         if (!selecaoTarefa) return;
@@ -33,11 +68,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tituloBloco) tituloBloco.textContent = 'Detalhes da Atividade Extra';
         }
         salvarEstadoSeletores();
+        atualizarBotaoPonto(); // Atualiza o botão ao trocar o tipo de atividade
     }
 
     if (selecaoTarefa) selecaoTarefa.addEventListener('change', alternarModoVisao);
-    if (selecaoSubTarefa) selecaoSubTarefa.addEventListener('change', salvarEstadoSeletores);
-    if (txtTituloExtra) txtTituloExtra.addEventListener('input', salvarEstadoSeletores);
+    
+    if (selecaoSubTarefa) {
+        selecaoSubTarefa.addEventListener('change', () => {
+            salvarEstadoSeletores();
+            atualizarBotaoPonto(); // Atualiza se mudar a matéria/turma
+        });
+    }
+    
+    if (txtTituloExtra) {
+        txtTituloExtra.addEventListener('input', () => {
+            salvarEstadoSeletores();
+            atualizarBotaoPonto(); // Atualiza se digitar um título extra
+        });
+    }
 
     function salvarEstadoSeletores() {
         if (!selecaoTarefa || !selecaoSubTarefa || !txtTituloExtra) return;
@@ -54,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alternarModoVisao();
     }
 
+    // Motor de cliques para Entrada e Saída de Ponto
     if (btnCadastrar) {
         btnCadastrar.addEventListener('click', () => {
             let nomeTarefa = "";
@@ -81,6 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 pontoAberto.status = "Confirmado";
                 alert(`Saída registrada às ${horarioRegistro} para: ${nomeTarefa}`);
                 
+                // FIX DO BUG: Limpa a caixa visual de texto e remove o cache ao fechar o ponto
+                if (txtAnotacoes) {
+                    txtAnotacoes.value = ""; 
+                    localStorage.removeItem('anotacoesProfessor'); 
+                }
+
                 if (tipoRegistro === 'Atividade Extra' && txtTituloExtra) {
                     txtTituloExtra.value = "";
                     salvarEstadoSeletores();
@@ -93,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     saida: "--:--",
                     tarefa: nomeTarefa,
                     status: "Pendente",
-                    anotacoes: anotacaoTexto || "Nenhuma observação informada."
+                    anotacoes: anotacaoTexto
                 };
                 pontosAtuais.push(novoPonto);
                 alert(`Entrada registrada às ${horarioRegistro} para: ${nomeTarefa}`);
@@ -101,9 +156,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('meus_pontos', JSON.stringify(pontosAtuais));
             carregarPontosNaTela();
+            atualizarBotaoPonto(); // Atualiza o estado visual do botão na hora
         });
     }
 
+    // Carrega o histórico dinâmico dos últimos 2 registros na tela
     function carregarPontosNaTela() {
         if (!listaPendencias) return;
 
@@ -117,21 +174,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // [...pontosSalvos] cria uma cópia para inverter apenas a exibição na tela
+        // [...pontosSalvos] faz um clone para inverter a ordem apenas visualmente
         [...pontosSalvos].reverse().slice(0, 2).forEach(ponto => {
             if (!ponto) return;
             
             const statusClasse = (ponto.status === "Confirmado" || ponto.status === "🟢 Confirmado") ? "status-confirmado" : "status-pendente";
             const statusTexto = (ponto.status === "Confirmado" || ponto.status === "🟢 Confirmado") ? "🟢 Confirmado" : "🟡 Pendente";
-            
-            // Caso encontre dados antigos guardados sem o atributo data, ele injeta o dia atual de forma segura
             const dataPonto = ponto.data || new Date().toLocaleDateString('pt-BR');
 
             const htmlItem = `
                 <div class="item-pendencia">
-                    <!-- LINHA ADICIONADA CONFORME O PEDIDO -->
                     <div class="pendencia-linha">
-                        <span class="pendencia-label">Data:</span>
+                        <span class="pendencia-label">Data / Dia:</span>
                         <span class="pendencia-valor">${dataPonto}</span>
                     </div>
                     <div class="pendencia-linha">
@@ -152,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Ação manual do botão "Salvar Anotações"
     const btnSalvar = document.getElementById('btnSalvarAnotacoes');
     if (btnSalvar && txtAnotacoes) {
         btnSalvar.addEventListener('click', () => {
@@ -160,16 +215,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+        // Botão inferior para redirecionar à tela de histórico unificado (/ponto)
     const btnAtalho = document.getElementById('btnIrParaPonto');
     if (btnAtalho) {
         btnAtalho.addEventListener('click', () => {
             const tStr = selecaoTarefa && selecaoTarefa.value === 'Aula Normal' ? (selecaoSubTarefa ? selecaoSubTarefa.value : '') : (txtTituloExtra ? txtTituloExtra.value.trim() : '');
             localStorage.setItem('tarefaAutomatica', tStr || 'Atividade Extra');
+            // CORRIGIDO: Alterado de tipoRegistrationAutomatica para tipoRegistroAutomatica
             localStorage.setItem('tipoRegistroAutomatica', selecaoTarefa ? selecaoTarefa.value : 'Aula Normal');
             window.location.href = '/ponto';
         });
     }
-});
+}); // CORRIGIDO: Agora fecha corretamente apenas o DOMContentLoaded do início do arquivo
 
 function atualizarData() {
     const elementoRelogio = document.getElementById("dataRelogio");
