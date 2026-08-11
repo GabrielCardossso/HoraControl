@@ -225,19 +225,6 @@ textarea {
   display: grid;
   gap: 8px;
 }
-.hc-user-mini {
-  padding: 12px;
-  border-radius: 12px;
-  background: var(--hc-surface-2);
-  color: var(--hc-muted);
-  font-size: 13px;
-  overflow-wrap: anywhere;
-}
-.hc-user-mini strong {
-  display: block;
-  color: var(--hc-text);
-  margin-bottom: 3px;
-}
 .hc-logout {
   color: var(--hc-danger);
 }
@@ -433,6 +420,10 @@ textarea {
   background: var(--hc-surface-2);
   color: var(--hc-text);
 }
+.hc-sidebar-footer [data-theme-toggle] {
+  border-color: transparent;
+  background: transparent;
+}
 .hc-btn:disabled {
   opacity: 0.55;
   cursor: wait;
@@ -609,7 +600,6 @@ textarea {
     top: 9px;
     margin: 0;
   }
-  .hc-user-mini,
   .hc-sidebar-footer form {
     display: none;
   }
