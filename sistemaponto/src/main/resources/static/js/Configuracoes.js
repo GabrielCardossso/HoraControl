@@ -16,13 +16,4 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("novaSenha").value = "";
         });
     }
-
-    document.querySelectorAll('.item-menu-config-page').forEach(item => {
-        item.addEventListener('click', () => {
-            const label = item.querySelector('span').textContent.trim();
-            if (label === 'Meu Perfil') window.location.href = 'MeuPerfil.html';
-            else if (label === 'Meu Ponto') window.location.href = 'MeuPonto.html';
-            else if (label === 'Configurações') window.location.href = 'Configuracoes.html';
-        });
-    });
 });

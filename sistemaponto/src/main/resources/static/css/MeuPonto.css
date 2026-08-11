@@ -1,6 +1,6 @@
 .corpo-ponto-page {
     font-family: Arial, sans-serif;
-    background-color: #4B4799;
+    background: linear-gradient(135deg, #12345a, #4B4799);
     margin: 0;
     display: flex;
     height: 100vh;
@@ -15,11 +15,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("../img/Fundo(1).png");
+    background-image: url("../img/hora-control-background-v2.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    opacity: 0.1;
+    opacity: 0.22;
     pointer-events: none;
     z-index: 0;
 }
@@ -214,4 +214,70 @@
 @keyframes abrirModal {
     from { transform: scale(0.85); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
+}
+
+/* Animações e acabamento visual mantendo filtros e tabela intactos */
+.sidebar-ponto-page {
+    box-shadow: 8px 0 30px rgba(20, 18, 60, 0.14);
+    animation: entrarSidebarPonto .55s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.item-menu-ponto-page {
+    border-radius: 10px 0 0 10px;
+    transition: background-color .25s ease, color .25s ease, transform .25s ease;
+}
+
+.item-menu-ponto-page:hover {
+    background: rgba(75, 71, 153, 0.09);
+    color: #4B4799;
+    transform: translateX(5px);
+}
+
+.container-bloco-ponto-page {
+    animation: subirBlocoPonto .65s cubic-bezier(.22, 1, .36, 1) both;
+    transition: box-shadow .3s ease;
+}
+
+.filtros-box-ponto { animation: aparecerFiltros .55s .1s ease both; }
+
+.filtros-box-ponto select,
+.filtros-box-ponto input { transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease !important; }
+.filtros-box-ponto select:focus,
+.filtros-box-ponto input:focus {
+    border-color: #4B4799 !important;
+    box-shadow: 0 0 0 4px rgba(75,71,153,.12);
+    transform: translateY(-1px);
+}
+
+.tabela-ponto-page tbody tr { animation: aparecerLinhaPonto .4s ease both; transition: background-color .22s ease, transform .22s ease; }
+.tabela-ponto-page tbody tr:hover { background: #f8f7ff; transform: translateX(3px); }
+
+.btn-tabela-ver-mais,
+#btnGerarRelatorio,
+#btnLimparFiltros { position: relative; overflow: hidden; }
+
+.btn-tabela-ver-mais:active,
+#btnGerarRelatorio:active,
+#btnLimparFiltros:active { transform: scale(.97); }
+
+@keyframes entrarSidebarPonto { from { opacity: 0; transform: translateX(-25px); } }
+@keyframes subirBlocoPonto { from { opacity: 0; transform: translateY(24px); } }
+@keyframes aparecerFiltros { from { opacity: 0; transform: translateY(-10px); } }
+@keyframes aparecerLinhaPonto { from { opacity: 0; transform: translateY(8px); } }
+
+@media (max-width: 768px) {
+    .corpo-ponto-page { height: auto; min-height: 100vh; overflow-y: auto; }
+    .container-ponto-page { height: auto; min-height: 100vh; flex-direction: column; }
+    .sidebar-ponto-page { width: 100%; height: auto; padding: 12px; flex-direction: row; gap: 8px; overflow-x: auto; }
+    .sidebar-ponto-page a { width: auto !important; flex-shrink: 0; }
+    .sidebar-ponto-page form { width: auto !important; margin-top: 0 !important; margin-left: auto; }
+    .item-menu-ponto-page { width: auto; padding: 8px 10px; }
+    .item-menu-ponto-page img { width: 30px; height: 30px; }
+    .item-menu-ponto-page span { font-size: 14px; }
+    .main-ponto-page { padding: 20px; overflow: visible; }
+    .container-bloco-ponto-page { padding: 24px 18px; overflow-x: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
