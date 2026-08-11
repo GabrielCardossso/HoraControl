@@ -22,7 +22,9 @@ public class TurmaController {
 
   @GetMapping("/todas")
   @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
-  public List<Turma> listarTodas() { return service.listar(); }
+  public List<Turma> listarTodas() {
+    return service.listar();
+  }
 
   @GetMapping("/{id}")
   public Turma buscar(@PathVariable Long id) {

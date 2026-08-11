@@ -52,8 +52,13 @@ public class Turma {
     return nome;
   }
 
-  public String getCodigo() { return codigo; }
-  public void setCodigo(String codigo) { this.codigo = codigo; }
+  public String getCodigo() {
+    return codigo;
+  }
+
+  public void setCodigo(String codigo) {
+    this.codigo = codigo;
+  }
 
   public void setNome(String nome) {
     this.nome = nome;
@@ -91,13 +96,36 @@ public class Turma {
     this.curso = curso;
   }
 
-  public BigDecimal getCargaHorariaPrevista() { return cargaHorariaPrevista; }
-  public void setCargaHorariaPrevista(BigDecimal cargaHorariaPrevista) { this.cargaHorariaPrevista = cargaHorariaPrevista; }
-  public LocalDate getDataInicio() { return dataInicio; }
-  public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
-  public LocalDate getDataFim() { return dataFim; }
-  public void setDataFim(LocalDate dataFim) { this.dataFim = dataFim; }
-  public boolean isAtivo() { return ativo; }
-  public void setAtivo(boolean ativo) { this.ativo = ativo; }
+  public BigDecimal getCargaHorariaPrevista() {
+    return cargaHorariaPrevista;
+  }
+
+  public void setCargaHorariaPrevista(BigDecimal cargaHorariaPrevista) {
+    this.cargaHorariaPrevista = cargaHorariaPrevista;
+  }
+
+  public LocalDate getDataInicio() {
+    return dataInicio;
+  }
+
+  public void setDataInicio(LocalDate dataInicio) {
+    this.dataInicio = dataInicio;
+  }
+
+  public LocalDate getDataFim() {
+    return dataFim;
+  }
+
+  public void setDataFim(LocalDate dataFim) {
+    this.dataFim = dataFim;
+  }
+
+  public boolean isAtivo() {
+    return ativo;
+  }
+
+  public void setAtivo(boolean ativo) {
+    this.ativo = ativo;
+  }
 
 }

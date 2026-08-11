@@ -78,10 +78,21 @@ public class RegistroPonto {
     this.turma = turma;
   }
 
-  public TipoRegistro getTipo() { return tipo; }
-  public void setTipo(TipoRegistro tipo) { this.tipo = tipo; }
-  public String getDescricao() { return descricao; }
-  public void setDescricao(String descricao) { this.descricao = descricao; }
+  public TipoRegistro getTipo() {
+    return tipo;
+  }
+
+  public void setTipo(TipoRegistro tipo) {
+    this.tipo = tipo;
+  }
+
+  public String getDescricao() {
+    return descricao;
+  }
+
+  public void setDescricao(String descricao) {
+    this.descricao = descricao;
+  }
 
   public LocalDateTime getEntrada() {
     return entrada;
@@ -119,14 +130,37 @@ public class RegistroPonto {
     return entrada != null && saida != null;
   }
 
-  public boolean isAjustado() { return ajustado; }
-  public void setAjustado(boolean ajustado) { this.ajustado = ajustado; }
-  public String getJustificativaAjuste() { return justificativaAjuste; }
-  public void setJustificativaAjuste(String justificativaAjuste) { this.justificativaAjuste = justificativaAjuste; }
-  public Professor getAlteradoPor() { return alteradoPor; }
-  public void setAlteradoPor(Professor alteradoPor) { this.alteradoPor = alteradoPor; }
-  public LocalDateTime getDataAlteracao() { return dataAlteracao; }
-  public void setDataAlteracao(LocalDateTime dataAlteracao) { this.dataAlteracao = dataAlteracao; }
+  public boolean isAjustado() {
+    return ajustado;
+  }
+
+  public void setAjustado(boolean ajustado) {
+    this.ajustado = ajustado;
+  }
+
+  public String getJustificativaAjuste() {
+    return justificativaAjuste;
+  }
+
+  public void setJustificativaAjuste(String justificativaAjuste) {
+    this.justificativaAjuste = justificativaAjuste;
+  }
+
+  public Professor getAlteradoPor() {
+    return alteradoPor;
+  }
+
+  public void setAlteradoPor(Professor alteradoPor) {
+    this.alteradoPor = alteradoPor;
+  }
+
+  public LocalDateTime getDataAlteracao() {
+    return dataAlteracao;
+  }
+
+  public void setDataAlteracao(LocalDateTime dataAlteracao) {
+    this.dataAlteracao = dataAlteracao;
+  }
 
   public long getMinutosTrabalhados() {
     return isPontoCompleto() ? Math.max(0, Duration.between(entrada, saida).toMinutes()) : 0;
@@ -137,7 +171,8 @@ public class RegistroPonto {
   }
 
   public BigDecimal getValorCalculado() {
-    if (turma == null || turma.getValorHora() == null) return BigDecimal.ZERO;
+    if (turma == null || turma.getValorHora() == null)
+      return BigDecimal.ZERO;
     return BigDecimal.valueOf(getMinutosTrabalhados())
         .multiply(turma.getValorHora())
         .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);

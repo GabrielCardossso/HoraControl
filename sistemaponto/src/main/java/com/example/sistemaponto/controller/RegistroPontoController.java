@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/registros")
 public class RegistroPontoController {
   private final RegistroPontoService service;
-  public RegistroPontoController(RegistroPontoService service) { this.service = service; }
+
+  public RegistroPontoController(RegistroPontoService service) {
+    this.service = service;
+  }
 
   @PostMapping("/abrir")
   public RegistroPonto abrir(@Valid @RequestBody AbrirPontoDTO dto, Principal principal) {
@@ -31,7 +34,9 @@ public class RegistroPontoController {
   }
 
   @GetMapping("/aberto")
-  public RegistroPonto aberto(Principal principal) { return service.pontoAberto(principal.getName()); }
+  public RegistroPonto aberto(Principal principal) {
+    return service.pontoAberto(principal.getName());
+  }
 
   @PutMapping("/{id}/ajustar")
   public RegistroPonto ajustar(@PathVariable Long id, @Valid @RequestBody AjustarPontoDTO dto, Principal principal) {

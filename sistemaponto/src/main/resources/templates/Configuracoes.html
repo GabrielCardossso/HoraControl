@@ -1,8 +1,139 @@
-<!DOCTYPE html><html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#4b4799"><meta name="_csrf" th:content="${_csrf.token}"><meta name="_csrf_header" th:content="${_csrf.headerName}"><title>Configurações - HoraControl</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
-<body class="hc-app"><div class="hc-shell"><aside class="hc-sidebar" aria-label="Navegação principal"><a class="hc-brand" th:href="@{/perfil}"><span class="hc-brand-badge">HC</span> HoraControl</a><nav class="hc-nav"><a th:href="@{/perfil}">⌂ <span>Painel</span></a><a th:href="@{/ponto}">◷ <span>Meu ponto</span></a><a th:href="@{/relatorios}">▤ <span>Relatórios</span></a><a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden>▦ <span>Turmas</span></a><a th:href="@{/usuarios}" data-role="ADMIN" hidden>♙ <span>Usuários</span></a><a th:href="@{/configuracoes}" aria-current="page">⚙ <span>Configurações</span></a></nav><div class="hc-sidebar-footer"><div class="hc-user-mini"><strong data-user-name>Carregando...</strong><span data-user-role></span></div><button type="button" class="hc-btn secondary" data-theme-toggle>◐</button><form th:action="@{/logout}" method="post"><button class="hc-logout">Sair</button></form></div></aside>
-<main class="hc-main"><header class="hc-header"><div><h1>Configurações</h1><p>Preferências pessoais e segurança da sua conta.</p></div></header>
-<section class="hc-grid two"><article class="hc-card"><h2>Minha conta</h2><div class="hc-form-grid"><div class="hc-field"><label>Nome</label><input id="nomeConta" readonly></div><div class="hc-field"><label>E-mail</label><input id="emailConta" readonly></div><div class="hc-field"><label>Matrícula</label><input id="matriculaConta" readonly></div><div class="hc-field"><label>Nível de acesso</label><input id="perfilConta" readonly></div></div><p class="hc-muted">Dados cadastrais são administrados com segurança pela administradora do sistema.</p></article>
-<article class="hc-card"><h2>Aparência</h2><div class="hc-field"><label for="tema">Tema da interface</label><select id="tema" data-theme-select><option value="system">Seguir o sistema</option><option value="light">Claro</option><option value="dark">Escuro</option></select></div><p class="hc-muted">Esta preferência afeta somente a aparência da sua sessão.</p></article>
-<article class="hc-card"><h2>Alterar senha</h2><form id="formSenha"><div class="hc-field"><label for="senhaAtual">Senha atual</label><input type="password" id="senhaAtual" autocomplete="current-password" required></div><div class="hc-field" style="margin-top:14px"><label for="novaSenha">Nova senha</label><input type="password" id="novaSenha" autocomplete="new-password" minlength="6" required></div><div class="hc-actions"><button class="hc-btn primary" type="submit">Atualizar senha</button></div></form></article>
-<article class="hc-card" data-role="ADMIN" hidden><h2>Administração</h2><p class="hc-muted">Cadastre contas, defina níveis de acesso e vincule professores às turmas.</p><div class="hc-actions"><a class="hc-btn primary" th:href="@{/usuarios}">Gerenciar usuários</a><a class="hc-btn secondary" th:href="@{/gestao-turmas}">Gerenciar turmas</a></div></article>
-</section></main></div><script th:src="@{/js/app.js}"></script><script th:src="@{/js/Configuracoes.js}"></script></body></html>
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#4b4799" />
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Configurações - HoraControl</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+  </head>
+  <body class="hc-app">
+    <div class="hc-shell">
+      <aside class="hc-sidebar" aria-label="Navegação principal">
+        <a class="hc-brand" th:href="@{/perfil}" aria-label="Ir para o painel"
+          ><img
+            class="hc-brand-logo"
+            th:src="@{/img/b0091c4a-e98d-4afa-8cb6-fda9ae1fe25f.png}"
+            alt="Senac"
+        /></a>
+        <nav class="hc-nav">
+          <a th:href="@{/perfil}">⌂ <span>Painel</span></a
+          ><a th:href="@{/ponto}">◷ <span>Meu ponto</span></a
+          ><a th:href="@{/relatorios}">▤ <span>Relatórios</span></a
+          ><a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden
+            >▦ <span>Turmas</span></a
+          ><a th:href="@{/usuarios}" data-role="ADMIN" hidden
+            >♙ <span>Usuários</span></a
+          ><a th:href="@{/configuracoes}" aria-current="page"
+            >⚙ <span>Configurações</span></a
+          >
+        </nav>
+        <div class="hc-sidebar-footer">
+          <div class="hc-user-mini">
+            <strong data-user-name>Carregando...</strong
+            ><span data-user-role></span>
+          </div>
+          <button type="button" class="hc-btn secondary" data-theme-toggle>
+            ◐
+          </button>
+          <form th:action="@{/logout}" method="post">
+            <button class="hc-logout">Sair</button>
+          </form>
+        </div>
+      </aside>
+      <main class="hc-main">
+        <header class="hc-header">
+          <div>
+            <h1>Configurações</h1>
+            <p>Preferências pessoais e segurança da sua conta.</p>
+          </div>
+        </header>
+        <section class="hc-grid two">
+          <article class="hc-card">
+            <h2>Minha conta</h2>
+            <div class="hc-form-grid">
+              <div class="hc-field">
+                <label>Nome</label><input id="nomeConta" readonly />
+              </div>
+              <div class="hc-field">
+                <label>E-mail</label><input id="emailConta" readonly />
+              </div>
+              <div class="hc-field">
+                <label>Matrícula</label><input id="matriculaConta" readonly />
+              </div>
+              <div class="hc-field">
+                <label>Nível de acesso</label
+                ><input id="perfilConta" readonly />
+              </div>
+            </div>
+            <p class="hc-muted">
+              Dados cadastrais são administrados com segurança pela
+              administradora do sistema.
+            </p>
+          </article>
+          <article class="hc-card">
+            <h2>Aparência</h2>
+            <div class="hc-field">
+              <label for="tema">Tema da interface</label
+              ><select id="tema" data-theme-select>
+                <option value="system">Seguir o sistema</option>
+                <option value="light">Claro</option>
+                <option value="dark">Escuro</option>
+              </select>
+            </div>
+            <p class="hc-muted">
+              Esta preferência afeta somente a aparência da sua sessão.
+            </p>
+          </article>
+          <article class="hc-card">
+            <h2>Alterar senha</h2>
+            <form id="formSenha">
+              <div class="hc-field">
+                <label for="senhaAtual">Senha atual</label
+                ><input
+                  type="password"
+                  id="senhaAtual"
+                  autocomplete="current-password"
+                  required
+                />
+              </div>
+              <div class="hc-field" style="margin-top: 14px">
+                <label for="novaSenha">Nova senha</label
+                ><input
+                  type="password"
+                  id="novaSenha"
+                  autocomplete="new-password"
+                  minlength="6"
+                  required
+                />
+              </div>
+              <div class="hc-actions">
+                <button class="hc-btn primary" type="submit">
+                  Atualizar senha
+                </button>
+              </div>
+            </form>
+          </article>
+          <article class="hc-card" data-role="ADMIN" hidden>
+            <h2>Administração</h2>
+            <p class="hc-muted">
+              Cadastre contas, defina níveis de acesso e vincule professores às
+              turmas.
+            </p>
+            <div class="hc-actions">
+              <a class="hc-btn primary" th:href="@{/usuarios}"
+                >Gerenciar usuários</a
+              ><a class="hc-btn secondary" th:href="@{/gestao-turmas}"
+                >Gerenciar turmas</a
+              >
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/Configuracoes.js}"></script>
+  </body>
+</html>

@@ -12,9 +12,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/conta")
 public class ContaController {
   private final ProfessorService service;
-  public ContaController(ProfessorService service) { this.service = service; }
-  @GetMapping public Professor atual(Principal principal) { return service.buscarPorEmail(principal.getName()); }
-  @PostMapping("/senha") public Map<String, String> senha(@Valid @RequestBody AlterarSenhaDTO dto, Principal principal) {
+
+  public ContaController(ProfessorService service) {
+    this.service = service;
+  }
+
+  @GetMapping
+  public Professor atual(Principal principal) {
+    return service.buscarPorEmail(principal.getName());
+  }
+
+  @PostMapping("/senha")
+  public Map<String, String> senha(@Valid @RequestBody AlterarSenhaDTO dto, Principal principal) {
     service.alterarSenha(principal.getName(), dto);
     return Map.of("mensagem", "Senha alterada com sucesso.");
   }

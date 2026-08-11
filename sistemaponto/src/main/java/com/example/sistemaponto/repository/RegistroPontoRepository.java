@@ -16,6 +16,8 @@ public interface RegistroPontoRepository
       StatusPonto status);
 
   List<RegistroPonto> findAllByOrderByEntradaDesc();
+
   List<RegistroPonto> findByProfessorIdOrderByEntradaDesc(Long professorId);
+
   List<RegistroPonto> findByEntradaBetweenOrderByEntradaDesc(LocalDateTime inicio, LocalDateTime fim);
 }

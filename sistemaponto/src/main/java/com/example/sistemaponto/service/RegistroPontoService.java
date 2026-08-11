@@ -38,13 +38,16 @@ public class RegistroPontoService {
   public RegistroPonto abrir(String email, AbrirPontoDTO dto) {
     Professor professor = usuario(email);
     registroRepository.findByProfessorIdAndStatus(professor.getId(), StatusPonto.ABERTO)
-        .ifPresent(r -> { throw new RegraNegocioException("Você já possui um ponto aberto desde " + r.getEntrada() + "."); });
+        .ifPresent(r -> {
+          throw new RegraNegocioException("Você já possui um ponto aberto desde " + r.getEntrada() + ".");
+        });
 
     Turma turma = null;
     if (dto.getTurmaId() != null) {
       turma = turmaRepository.findById(dto.getTurmaId())
           .orElseThrow(() -> new RegraNegocioException("Turma não encontrada."));
-      if (!turma.isAtivo()) throw new RegraNegocioException("Esta turma está inativa.");
+      if (!turma.isAtivo())
+        throw new RegraNegocioException("Esta turma está inativa.");
       Long turmaSelecionadaId = turma.getId();
       if (professor.getPerfil() == Perfil.PROFESSOR && !professor.getTurmas().isEmpty()
           && professor.getTurmas().stream().noneMatch(t -> t.getId().equals(turmaSelecionadaId)))
@@ -68,8 +71,10 @@ public class RegistroPontoService {
   public RegistroPonto fechar(String email, Long id) {
     Professor solicitante = usuario(email);
     RegistroPonto registro = buscarObrigatorio(id);
-    if (!podeGerenciar(solicitante, registro)) throw new RegraNegocioException("Você não pode fechar o ponto de outro usuário.");
-    if (registro.getStatus() == StatusPonto.FECHADO) throw new RegraNegocioException("Este ponto já está fechado.");
+    if (!podeGerenciar(solicitante, registro))
+      throw new RegraNegocioException("Você não pode fechar o ponto de outro usuário.");
+    if (registro.getStatus() == StatusPonto.FECHADO)
+      throw new RegraNegocioException("Este ponto já está fechado.");
     registro.setSaida(LocalDateTime.now());
     registro.setStatus(StatusPonto.FECHADO);
     return registroRepository.save(registro);
@@ -86,11 +91,18 @@ public class RegistroPontoService {
     if (solicitante.getPerfil() == null || !solicitante.getPerfil().isCoordenacao())
       throw new RegraNegocioException("Somente a coordenação ou a administração pode ajustar registros.");
     RegistroPonto registro = buscarObrigatorio(id);
-    if (!podeGerenciar(solicitante, registro)) throw new RegraNegocioException("Você não pode ajustar este registro.");
-    if (!dto.getSaida().isAfter(dto.getEntrada())) throw new RegraNegocioException("A saída deve ser posterior à entrada.");
-    registro.setEntrada(dto.getEntrada()); registro.setSaida(dto.getSaida()); registro.setStatus(StatusPonto.FECHADO);
-    registro.setObservacao(limpar(dto.getObservacao())); registro.setAjustado(true);
-    registro.setJustificativaAjuste(dto.getJustificativa().trim()); registro.setAlteradoPor(solicitante); registro.setDataAlteracao(LocalDateTime.now());
+    if (!podeGerenciar(solicitante, registro))
+      throw new RegraNegocioException("Você não pode ajustar este registro.");
+    if (!dto.getSaida().isAfter(dto.getEntrada()))
+      throw new RegraNegocioException("A saída deve ser posterior à entrada.");
+    registro.setEntrada(dto.getEntrada());
+    registro.setSaida(dto.getSaida());
+    registro.setStatus(StatusPonto.FECHADO);
+    registro.setObservacao(limpar(dto.getObservacao()));
+    registro.setAjustado(true);
+    registro.setJustificativaAjuste(dto.getJustificativa().trim());
+    registro.setAlteradoPor(solicitante);
+    registro.setDataAlteracao(LocalDateTime.now());
     return registroRepository.save(registro);
   }
 
@@ -98,16 +110,23 @@ public class RegistroPontoService {
       Long turmaId, StatusPonto status, TipoRegistro tipo, String busca) {
     Professor solicitante = usuario(email);
     Stream<RegistroPonto> fluxo = visiveis(solicitante).stream();
-    if (inicio != null) fluxo = fluxo.filter(r -> !r.getEntrada().toLocalDate().isBefore(inicio));
-    if (fim != null) fluxo = fluxo.filter(r -> !r.getEntrada().toLocalDate().isAfter(fim));
-    if (professorId != null) fluxo = fluxo.filter(r -> r.getProfessor().getId().equals(professorId));
-    if (turmaId != null) fluxo = fluxo.filter(r -> r.getTurma() != null && r.getTurma().getId().equals(turmaId));
-    if (status != null) fluxo = fluxo.filter(r -> r.getStatus() == status);
-    if (tipo != null) fluxo = fluxo.filter(r -> r.getTipo() == tipo);
+    if (inicio != null)
+      fluxo = fluxo.filter(r -> !r.getEntrada().toLocalDate().isBefore(inicio));
+    if (fim != null)
+      fluxo = fluxo.filter(r -> !r.getEntrada().toLocalDate().isAfter(fim));
+    if (professorId != null)
+      fluxo = fluxo.filter(r -> r.getProfessor().getId().equals(professorId));
+    if (turmaId != null)
+      fluxo = fluxo.filter(r -> r.getTurma() != null && r.getTurma().getId().equals(turmaId));
+    if (status != null)
+      fluxo = fluxo.filter(r -> r.getStatus() == status);
+    if (tipo != null)
+      fluxo = fluxo.filter(r -> r.getTipo() == tipo);
     if (busca != null && !busca.isBlank()) {
       String termo = busca.toLowerCase(Locale.ROOT);
       fluxo = fluxo.filter(r -> contem(r.getDescricao(), termo) || contem(r.getObservacao(), termo)
-          || (r.getTurma() != null && (contem(r.getTurma().getNome(), termo) || contem(r.getTurma().getCodigo(), termo)))
+          || (r.getTurma() != null
+              && (contem(r.getTurma().getNome(), termo) || contem(r.getTurma().getCodigo(), termo)))
           || contem(r.getProfessor().getNome(), termo));
     }
     return fluxo.toList();
@@ -120,7 +139,8 @@ public class RegistroPontoService {
       Long cursoId = solicitante.getCursoResponsavel().getId();
       return registroRepository.findAllByOrderByEntradaDesc().stream()
           .filter(r -> r.getTurma() != null && r.getTurma().getCurso() != null
-              && r.getTurma().getCurso().getId().equals(cursoId)).toList();
+              && r.getTurma().getCurso().getId().equals(cursoId))
+          .toList();
     }
     return registroRepository.findByProfessorIdOrderByEntradaDesc(solicitante.getId());
   }
@@ -137,7 +157,8 @@ public class RegistroPontoService {
     if (solicitante.getPerfil() == Perfil.COORDENADOR_CURSO && solicitante.getCursoResponsavel() != null) {
       Long cursoId = solicitante.getCursoResponsavel().getId();
       return professorRepository.findAllByOrderByNomeAsc().stream().filter(Professor::isAtivo)
-          .filter(p -> p.getTurmas().stream().anyMatch(t -> t.getCurso() != null && t.getCurso().getId().equals(cursoId)))
+          .filter(
+              p -> p.getTurmas().stream().anyMatch(t -> t.getCurso() != null && t.getCurso().getId().equals(cursoId)))
           .toList();
     }
     LinkedHashMap<Long, Professor> mapa = new LinkedHashMap<>();
@@ -149,7 +170,8 @@ public class RegistroPontoService {
   public RegistroPonto buscar(Long id, String email) {
     Professor solicitante = usuario(email);
     RegistroPonto registro = buscarObrigatorio(id);
-    if (!podeGerenciar(solicitante, registro)) throw new RegraNegocioException("Acesso negado a este registro.");
+    if (!podeGerenciar(solicitante, registro))
+      throw new RegraNegocioException("Acesso negado a este registro.");
     return registro;
   }
 
@@ -158,13 +180,20 @@ public class RegistroPontoService {
   }
 
   private boolean podeGerenciar(Professor usuario, RegistroPonto registro) {
-    if (usuario.getId().equals(registro.getProfessor().getId())) return true;
-    if (usuario.getPerfil() != null && usuario.getPerfil().podeVerTodosRelatorios()) return true;
+    if (usuario.getId().equals(registro.getProfessor().getId()))
+      return true;
+    if (usuario.getPerfil() != null && usuario.getPerfil().podeVerTodosRelatorios())
+      return true;
     return usuario.getPerfil() == Perfil.COORDENADOR_CURSO && usuario.getCursoResponsavel() != null
         && registro.getTurma() != null && registro.getTurma().getCurso() != null
         && usuario.getCursoResponsavel().getId().equals(registro.getTurma().getCurso().getId());
   }
 
-  private boolean contem(String valor, String termo) { return valor != null && valor.toLowerCase(Locale.ROOT).contains(termo); }
-  private String limpar(String valor) { return valor == null || valor.isBlank() ? null : valor.trim(); }
+  private boolean contem(String valor, String termo) {
+    return valor != null && valor.toLowerCase(Locale.ROOT).contains(termo);
+  }
+
+  private String limpar(String valor) {
+    return valor == null || valor.isBlank() ? null : valor.trim();
+  }
 }

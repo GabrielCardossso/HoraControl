@@ -59,9 +59,7 @@ public class Professor {
   private Curso cursoResponsavel;
 
   @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(name = "professor_turma",
-      joinColumns = @JoinColumn(name = "professor_id"),
-      inverseJoinColumns = @JoinColumn(name = "turma_id"))
+  @JoinTable(name = "professor_turma", joinColumns = @JoinColumn(name = "professor_id"), inverseJoinColumns = @JoinColumn(name = "turma_id"))
   private Set<Turma> turmas = new LinkedHashSet<>();
 
   @Column(nullable = false)
@@ -99,20 +97,61 @@ public class Professor {
     return senha;
   }
 
-  public String getMatricula() { return matricula; }
-  public void setMatricula(String matricula) { this.matricula = matricula; }
-  public String getCpf() { return cpf; }
-  public void setCpf(String cpf) { this.cpf = cpf; }
-  public String getTelefone() { return telefone; }
-  public void setTelefone(String telefone) { this.telefone = telefone; }
-  public boolean isAtivo() { return ativo; }
-  public void setAtivo(boolean ativo) { this.ativo = ativo; }
-  public Curso getCursoResponsavel() { return cursoResponsavel; }
-  public void setCursoResponsavel(Curso cursoResponsavel) { this.cursoResponsavel = cursoResponsavel; }
-  public Set<Turma> getTurmas() { return turmas; }
-  public void setTurmas(Set<Turma> turmas) { this.turmas = turmas == null ? new LinkedHashSet<>() : turmas; }
-  public LocalDateTime getDataCriacao() { return dataCriacao; }
-  public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+  public String getMatricula() {
+    return matricula;
+  }
+
+  public void setMatricula(String matricula) {
+    this.matricula = matricula;
+  }
+
+  public String getCpf() {
+    return cpf;
+  }
+
+  public void setCpf(String cpf) {
+    this.cpf = cpf;
+  }
+
+  public String getTelefone() {
+    return telefone;
+  }
+
+  public void setTelefone(String telefone) {
+    this.telefone = telefone;
+  }
+
+  public boolean isAtivo() {
+    return ativo;
+  }
+
+  public void setAtivo(boolean ativo) {
+    this.ativo = ativo;
+  }
+
+  public Curso getCursoResponsavel() {
+    return cursoResponsavel;
+  }
+
+  public void setCursoResponsavel(Curso cursoResponsavel) {
+    this.cursoResponsavel = cursoResponsavel;
+  }
+
+  public Set<Turma> getTurmas() {
+    return turmas;
+  }
+
+  public void setTurmas(Set<Turma> turmas) {
+    this.turmas = turmas == null ? new LinkedHashSet<>() : turmas;
+  }
+
+  public LocalDateTime getDataCriacao() {
+    return dataCriacao;
+  }
+
+  public void setDataCriacao(LocalDateTime dataCriacao) {
+    this.dataCriacao = dataCriacao;
+  }
 
   public Perfil getPerfil() {
     return perfil;

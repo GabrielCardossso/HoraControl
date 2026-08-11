@@ -1,53 +1,93 @@
 @property --hc-fill-radius {
-    syntax: "<length>";
-    inherits: false;
-    initial-value: 0px;
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
 }
 
 .hc-fill-button {
-    --hc-fill-x: 50%;
-    --hc-fill-y: 50%;
-    --hc-fill-radius: 0px;
-    --hc-fill-color: #005a9e;
-    background-image: radial-gradient(
-        circle at var(--hc-fill-x) var(--hc-fill-y),
-        var(--hc-fill-color) 0,
-        var(--hc-fill-color) var(--hc-fill-radius),
-        transparent calc(var(--hc-fill-radius) + 1px)
-    ) !important;
-    background-repeat: no-repeat !important;
-    transition: --hc-fill-radius .52s cubic-bezier(.22, 1, .36, 1), color .28s ease, transform .22s ease, box-shadow .28s ease !important;
+  --hc-fill-x: 50%;
+  --hc-fill-y: 50%;
+  --hc-fill-radius: 0px;
+  --hc-fill-color: #005a9e;
+  background-image: radial-gradient(
+    circle at var(--hc-fill-x) var(--hc-fill-y),
+    var(--hc-fill-color) 0,
+    var(--hc-fill-color) var(--hc-fill-radius),
+    transparent calc(var(--hc-fill-radius) + 1px)
+  ) !important;
+  background-repeat: no-repeat !important;
+  transition:
+    --hc-fill-radius 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.28s ease,
+    transform 0.22s ease,
+    box-shadow 0.28s ease !important;
 }
 
-.hc-fill-button:hover { color: #fff !important; }
-.hc-fill-button:active { transform: scale(.98) !important; }
+.hc-fill-button:hover {
+  color: #fff !important;
+}
+.hc-fill-button:active {
+  transform: scale(0.98) !important;
+}
 
-.btn-submit-login { --hc-fill-color: #005a9e; }
-.btn-submit-login:hover { background-color: #007acc !important; }
+.btn-submit-login {
+  --hc-fill-color: #005a9e;
+}
+.btn-submit-login:hover {
+  background-color: #007acc !important;
+}
 
 .btn-ponto-page-topo,
-.btn-acao-perfil-page { --hc-fill-color: #0b6fb6; }
+.btn-acao-perfil-page {
+  --hc-fill-color: #0b6fb6;
+}
 .btn-ponto-page-topo:hover,
-.btn-acao-perfil-page:hover { background-color: #2196f3 !important; }
-.btn-ponto-page-topo.ponto-aberto { --hc-fill-color: #dc2626; }
-.btn-ponto-page-topo.ponto-aberto:hover { background-color: #0d8aee !important; }
+.btn-acao-perfil-page:hover {
+  background-color: #2196f3 !important;
+}
+.btn-ponto-page-topo.ponto-aberto {
+  --hc-fill-color: #dc2626;
+}
+.btn-ponto-page-topo.ponto-aberto:hover {
+  background-color: #0d8aee !important;
+}
 
-.btn-tabela-ver-mais { --hc-fill-color: #3a357c; }
-.btn-tabela-ver-mais:hover { background-color: #4B4799 !important; }
+.btn-tabela-ver-mais {
+  --hc-fill-color: #3a357c;
+}
+.btn-tabela-ver-mais:hover {
+  background-color: #4b4799 !important;
+}
 
-#btnGerarRelatorio { --hc-fill-color: #146c43; }
-#btnGerarRelatorio:hover { background-color: #198754 !important; }
+#btnGerarRelatorio {
+  --hc-fill-color: #146c43;
+}
+#btnGerarRelatorio:hover {
+  background-color: #198754 !important;
+}
 
-#btnLimparFiltros { --hc-fill-color: #4B4799; }
-#btnLimparFiltros:hover { background-color: #f4f4f4 !important; }
+#btnLimparFiltros {
+  --hc-fill-color: #4b4799;
+}
+#btnLimparFiltros:hover {
+  background-color: #f4f4f4 !important;
+}
 
-.btn-salvar-config-page { --hc-fill-color: #312e68; }
-.btn-salvar-config-page:hover { background-color: #4B4799 !important; }
+.btn-salvar-config-page {
+  --hc-fill-color: #312e68;
+}
+.btn-salvar-config-page:hover {
+  background-color: #4b4799 !important;
+}
 
 .btn-logout-config,
 .sidebar-perfil-page form button,
-.sidebar-ponto-page form button { --hc-fill-color: #dc2626; }
+.sidebar-ponto-page form button {
+  --hc-fill-color: #dc2626;
+}
 
 @media (prefers-reduced-motion: reduce) {
-    .hc-fill-button { transition-duration: .01ms !important; }
+  .hc-fill-button {
+    transition-duration: 0.01ms !important;
+  }
 }
