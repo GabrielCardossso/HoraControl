@@ -9,8 +9,7 @@ import com.example.sistemaponto.service.TurmaService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/turmas")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/turmas")
 public class TurmaController {
 
   @Autowired
@@ -18,8 +17,12 @@ public class TurmaController {
 
   @GetMapping
   public List<Turma> listar() {
-    return service.listar();
+    return service.listarAtivas();
   }
+
+  @GetMapping("/todas")
+  @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+  public List<Turma> listarTodas() { return service.listar(); }
 
   @GetMapping("/{id}")
   public Turma buscar(@PathVariable Long id) {
@@ -27,11 +30,13 @@ public class TurmaController {
   }
 
   @PostMapping
+  @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
   public Turma salvar(@RequestBody Turma turma) {
     return service.salvar(turma);
   }
 
   @PutMapping("/{id}")
+  @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
   public Turma atualizar(@PathVariable Long id,
       @RequestBody Turma turma) {
     turma.setId(id);
@@ -39,6 +44,7 @@ public class TurmaController {
   }
 
   @DeleteMapping("/{id}")
+  @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
   public void excluir(@PathVariable Long id) {
     service.excluir(id);
   }

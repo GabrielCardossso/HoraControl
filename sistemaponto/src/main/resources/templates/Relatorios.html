@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#4b4799">
+  <meta name="_csrf" th:content="${_csrf.token}">
+  <meta name="_csrf_header" th:content="${_csrf.headerName}">
+  <title>Relatórios - HoraControl</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="hc-app">
+  <div class="hc-shell">
+    <aside class="hc-sidebar">
+      <a class="hc-brand" th:href="@{/perfil}"><span class="hc-brand-badge">HC</span> HoraControl</a>
+      <nav class="hc-nav">
+        <a th:href="@{/perfil}">⌂ <span>Painel</span></a>
+        <a th:href="@{/ponto}">◷ <span>Meu ponto</span></a>
+        <a th:href="@{/relatorios}" aria-current="page">▤ <span>Relatórios</span></a>
+        <a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden>▦ <span>Turmas</span></a>
+        <a th:href="@{/usuarios}" data-role="ADMIN" hidden>♙ <span>Usuários</span></a>
+        <a th:href="@{/configuracoes}">⚙ <span>Configurações</span></a>
+      </nav>
+      <div class="hc-sidebar-footer">
+        <div class="hc-user-mini"><strong data-user-name>Carregando...</strong><span data-user-role></span></div>
+        <button type="button" class="hc-btn secondary" data-theme-toggle aria-label="Alterar tema">◐</button>
+        <form th:action="@{/logout}" method="post"><button class="hc-logout">Sair</button></form>
+      </div>
+    </aside>
+
+    <main class="hc-main">
+      <header class="hc-header"><div><h1>Relatórios</h1><p>Gere documentos detalhados dentro do seu nível de acesso.</p></div></header>
+      <section class="hc-grid two">
+        <article class="hc-card">
+          <h2>Configurar relatório</h2>
+          <form id="formRelatorio">
+            <div class="hc-form-grid">
+              <div class="hc-field">
+                <label for="inicioRelatorio">Data inicial</label>
+                <input type="date" id="inicioRelatorio">
+                <small class="hc-help">Use esta data para listar registros a partir do dia informado.</small>
+              </div>
+              <div class="hc-field">
+                <label for="fimRelatorio">Data final</label>
+                <input type="date" id="fimRelatorio">
+                <small class="hc-help">Opcional. Deixe em branco para considerar todos os registros posteriores.</small>
+              </div>
+              <div class="hc-field"><label for="professorRelatorio">Professor</label><select id="professorRelatorio"><option value="">Todos permitidos</option></select></div>
+              <div class="hc-field"><label for="turmaRelatorio">Turma</label><select id="turmaRelatorio"><option value="">Todas</option></select></div>
+              <div class="hc-field"><label for="statusRelatorio">Status</label><select id="statusRelatorio"><option value="">Todos</option><option value="FECHADO">Somente fechados</option><option value="ABERTO">Somente abertos</option></select></div>
+            </div>
+            <div class="hc-actions">
+              <button type="button" class="hc-btn secondary" id="visualizarRelatorio">Atualizar prévia</button>
+              <button type="button" class="hc-btn danger" id="baixarPdf">Baixar PDF</button>
+              <button type="button" class="hc-btn success" id="baixarExcel">Baixar Excel</button>
+            </div>
+          </form>
+        </article>
+        <article class="hc-card">
+          <h2>Resumo da prévia</h2>
+          <div class="hc-grid">
+            <div class="hc-stat"><span class="hc-muted">Registros encontrados</span><strong id="previewRegistros">0</strong></div>
+            <div class="hc-stat"><span class="hc-muted">Horas fechadas</span><strong id="previewHoras">0,00 h</strong></div>
+            <div class="hc-stat"><span class="hc-muted">Pagamento estimado</span><strong id="previewValor">R$ 0,00</strong></div>
+          </div>
+          <p class="hc-muted">O cálculo usa os minutos efetivamente registrados multiplicados pelo valor-hora da turma.</p>
+        </article>
+      </section>
+      <section class="hc-card" style="margin-top:20px">
+        <h2>Prévia</h2>
+        <div class="hc-table-wrap">
+          <table class="hc-table"><thead><tr><th>Professor</th><th>Código/turma</th><th>Data</th><th>Horas</th><th>Valor-hora</th><th>Total</th><th>Status</th></tr></thead><tbody id="previewTabela"><tr><td colspan="7" class="hc-empty">Carregando...</td></tr></tbody></table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script th:src="@{/js/app.js}"></script>
+  <script th:src="@{/js/Relatorios.js}"></script>
+</body>
+</html>

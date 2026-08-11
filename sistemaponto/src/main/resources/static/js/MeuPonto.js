@@ -1,215 +1,62 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const tabelaCorpo = document.querySelector('#tabelaLembrete tbody');
-    const chkSelecionarTodos = document.getElementById("selecionarTodos");
-    const btnRelatorio = document.getElementById("btnGerarRelatorio");
-    
-    // Elementos do painel de filtros
-    const filterTipo = document.getElementById("filtroTipo");
-    const filterData = document.getElementById("filtroData");
-    const filterTarefa = document.getElementById("filtroTarefa");
-    const btnLimpar = document.getElementById("btnLimparFiltros");
+  const form = document.getElementById('formFiltros'); const periodo = document.getElementById('periodoRapido');
+  const inicio = document.getElementById('inicio'); const fim = document.getElementById('fim');
+  const professor = document.getElementById('professorId'); const turma = document.getElementById('turmaFiltro');
+  const status = document.getElementById('statusFiltro'); const busca = document.getElementById('busca');
+  const tbody = document.getElementById('corpoRegistros');
+  let registrosAtuais = []; let podeAjustar = false;
+  const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+  const dataHora = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
-    const modal = document.getElementById("modalAnotacoes");
-    const modalTexto = document.getElementById("modalTextoAnotacao");
-    const modalClose = document.querySelector(".modal-anotacoes-close");
+  function iso(d) { return d.toISOString().slice(0, 10); }
+  function aplicarPeriodo() {
+    const hoje = new Date(); let ini = new Date(hoje); let final = hoje;
+    if (periodo.value === 'mes') ini = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    else if (periodo.value === 'semana') { const dia = (hoje.getDay() + 6) % 7; ini.setDate(hoje.getDate() - dia); }
+    else if (periodo.value === '30dias') ini.setDate(hoje.getDate() - 29);
+    else if (periodo.value === 'todos') { inicio.value = fim.value = ''; return; }
+    else if (periodo.value === 'custom') return;
+    inicio.value = iso(ini); fim.value = iso(final);
+  }
+  periodo.addEventListener('change', () => { aplicarPeriodo(); carregar(); });
+  inicio.addEventListener('change', () => periodo.value = 'custom'); fim.addEventListener('change', () => periodo.value = 'custom');
 
-    function carregarTabelaPonto() {
-        if (!tabelaCorpo) return;
-
-        let pontosSalvos = JSON.parse(localStorage.getItem('meus_pontos')) || [];
-        pontosSalvos = pontosSalvos.filter(ponto => ponto && ponto.entrada);
-
-        tabelaCorpo.innerHTML = "";
-
-        if (pontosSalvos.length === 0) {
-            tabelaCorpo.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align: center; color: #999; padding: 20px;">
-                        Nenhum ponto registrado no momento.
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        const pontosComIndex = pontosSalvos.map((ponto, index) => ({ ...ponto, idOriginal: index }));
-
-        [...pontosComIndex].reverse().forEach(ponto => {
-            let totalHoras = "--:--h";
-            if (ponto.saida && ponto.saida !== "--:--") {
-                totalHoras = calcularDiferencaHoras(ponto.entrada, ponto.saida);
-            }
-
-            const dataRegistro = ponto.data || new Date().toLocaleDateString('pt-BR');
-            const statusTexto = (ponto.status === "Confirmado" || ponto.status === "🟢 Confirmado") ? "🟢 Confirmado" : "🟡 Pendente";
-
-            const tr = document.createElement('tr');
-            
-            tr.setAttribute('data-tipo', (ponto.tipo || 'Aula Normal').toLowerCase());
-            tr.setAttribute('data-data', dataRegistro);
-            tr.setAttribute('data-tarefa', (ponto.tarefa || '').toLowerCase());
-
-            // Adicionado checkbox individual linkado com o índice original na primeira coluna
-            tr.innerHTML = `
-                <td style="text-align: center;"><input type="checkbox" class="chk-ponto-item" data-id="${ponto.idOriginal}" /></td>
-                <td>${ponto.tipo || 'Aula Normal'}</td>
-                <td>${dataRegistro}</td>
-                <td>${ponto.entrada} / ${ponto.saida}</td>
-                <td>${ponto.tarefa}</td>
-                <td>${statusTexto}</td>
-                <td><button class="btn-tabela-ver-mais" data-id="${ponto.idOriginal}">Ver mais</button></td>
-            `;
-            tabelaCorpo.appendChild(tr);
-        });
-
-        adicionarEventosModal(pontosSalvos);
-        aplicarFiltroAutomaticoDoPerfil();
-        configurarSelecaoEmMassa();
-    }
-
-    function calcularDiferencaHoras(entrada, saida) {
-        const [hEntrada, mEntrada] = entrada.split(':').map(Number);
-        const [hSaida, mSaida] = saida.split(':').map(Number);
-        let minutosTotais = (hSaida * 60 + mSaida) - (hEntrada * 60 + mEntrada);
-        if (minutosTotais < 0) minutosTotais += 24 * 60; 
-        const horas = Math.floor(minutosTotais / 60);
-        const minutos = minutosTotais % 60;
-        return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}h`;
-    }
-
-    // CONTROLE DOS CHECKBOXES MESTRE E INDIVIDUAL
-    function configurarSelecaoEmMassa() {
-        if (!chkSelecionarTodos) return;
-
-        chkSelecionarTodos.addEventListener('change', function() {
-            // Seleciona apenas as linhas que estão visíveis (ignora as ocultadas por filtros)
-            const checkboxesVisiveis = Array.from(tabelaCorpo.querySelectorAll('.chk-ponto-item')).filter(chk => {
-                return chk.closest('tr').style.display !== "none";
-            });
-
-            checkboxesVisiveis.forEach(chk => {
-                chk.checked = this.checked;
-            });
-        });
-    }
-
-    // EXTRAÇÃO E COMPILAÇÃO DOS SELECIONADOS PARA O RELATÓRIO
-    if (btnRelatorio) {
-        btnRelatorio.addEventListener('click', () => {
-            const itensMarcados = tabelaCorpo.querySelectorAll('.chk-ponto-item:checked');
-
-            if (itensMarcados.length === 0) {
-                alert('⚠️ Por favor, marque ao menos um registro de ponto usando as caixas de seleção da tabela.');
-                return;
-            }
-
-            let pontosSalvos = JSON.parse(localStorage.getItem('meus_pontos')) || [];
-            let dadosRelatorio = [];
-
-            itensMarcados.forEach(chk => {
-                const id = chk.getAttribute('data-id');
-                if (pontosSalvos[id]) {
-                    dadosRelatorio.push(pontosSalvos[id]);
-                }
-            });
-
-            alert(`📌 Relatório em lote processado com sucesso!\nForam compilados ${dadosRelatorio.length} registros para a geração do espelho de ponto.`);
-            console.log("Dados estruturados enviados ao gerador:", dadosRelatorio);
-            
-            // Ponto de integração futuro com endpoint Java:
-            // fetch('/api/ponto/exportar', { method: 'POST', body: JSON.stringify(dadosRelatorio) });
-        });
-    }
-
-    // LÓGICA DE FILTRAGEM MULTICRITÉRIO COMBINADA
-    function filtrarTabela() {
-        if (!tabelaCorpo) return;
-
-        const valorTipo = filterTipo ? filterTipo.value.toLowerCase() : "";
-        const valorTarefa = filterTarefa ? filterTarefa.value.toLowerCase().trim() : "";
-        let valorData = filterData ? filterData.value : "";
-
-        if (valorData) {
-            const [ano, mes, dia] = valorData.split('-');
-            valorData = `${dia}/${mes}/${ano}`;
-        }
-
-        Array.from(tabelaCorpo.rows).forEach(row => {
-            if (row.cells.length === 1) return;
-
-            const tipoLinha = row.getAttribute('data-tipo') || "";
-            const dataLinha = row.getAttribute('data-data') || "";
-            const tarefaLinha = row.getAttribute('data-tarefa') || "";
-
-            const bateTipo = valorTipo === "" || tipoLinha === valorTipo;
-            const bateData = valorData === "" || dataLinha === valorData;
-            const bateTarefa = valorTarefa === "" || tarefaLinha.includes(valorTarefa);
-
-            if (bateTipo && bateData && bateTarefa) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-                // Desmarca automaticamente linhas ocultadas por filtros para evitar relatórios errados
-                const chk = row.querySelector('.chk-ponto-item');
-                if (chk) chk.checked = false;
-            }
-        });
-        
-        if (chkSelecionarTodos) chkSelecionarTodos.checked = false;
-    }
-
-    if (filterTipo) filterTipo.addEventListener("change", filtrarTabela);
-    if (filterData) filterData.addEventListener("input", filtrarTabela);
-    if (filterTarefa) filterTarefa.addEventListener("input", filtrarTabela);
-
-    if (btnLimpar) {
-        btnLimpar.addEventListener("click", () => {
-            if (filterTipo) filterTipo.value = "";
-            if (filterData) filterData.value = "";
-            if (filterTarefa) filterTarefa.value = "";
-            if (chkSelecionarTodos) chkSelecionarTodos.checked = false;
-            filtrarTabela();
-        });
-    }
-
-    function aplicarFiltroAutomaticoDoPerfil() {
-        const tarefaAuto = localStorage.getItem('tarefaAutomatica');
-        const tipoAuto = localStorage.getItem('tipoRegistroAutomatica');
-
-        if (tarefaAuto || tipoAuto) {
-            if (tipoAuto && filterTipo) filterTipo.value = tipoAuto;
-            if (tarefaAuto && filterTarefa) filterTarefa.value = tarefaAuto;
-            filtrarTabela();
-            localStorage.removeItem('tarefaAutomatica');
-            localStorage.removeItem('tipoRegistroAutomatica');
-        }
-    }
-
-    function adicionarEventosModal(pontosSalvos) {
-        document.querySelectorAll('.btn-tabela-ver-mais').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.target.getAttribute('data-id');
-                const pontoSelecionado = pontosSalvos[id];
-
-                if (pontoSelecionado && modal && modalTexto) {
-                    modalTexto.textContent = pontoSelecionado.anotacoes || "Nenhuma observação foi registrada para este ponto.";
-                    modal.style.display = "flex";
-                }
-            });
-        });
-    }
-
-    if (modalClose && modal) {
-        modalClose.addEventListener('click', () => {
-            modal.style.display = "none";
-        });
-    }
-
-    window.addEventListener('click', (e) => {
-        if (modal && e.target === modal) {
-            modal.style.display = "none";
-        }
-    });
-
-    carregarTabelaPonto();
+  async function opcoes() {
+    try {
+      const [tRes, pRes] = await Promise.all([hcFetch('/api/turmas'), hcFetch('/api/registros/professores/visiveis')]);
+      const [turmas, professores] = await Promise.all([tRes.json(), pRes.json()]);
+      turma.innerHTML = '<option value="">Todas</option>' + turmas.map(t => `<option value="${t.id}">${esc(t.codigo)} - ${esc(t.nome)}</option>`).join('');
+      professor.innerHTML = '<option value="">Todos permitidos</option>' + professores.map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join('');
+      if (professores.length <= 1) professor.closest('.hc-field').hidden = true;
+    } catch (e) { hcToast(e.message, 'error'); }
+  }
+  function query() {
+    const q = new URLSearchParams();
+    if (inicio.value) q.set('inicio', inicio.value); if (fim.value) q.set('fim', fim.value);
+    if (professor.value) q.set('professorId', professor.value); if (turma.value) q.set('turmaId', turma.value);
+    if (status.value) q.set('status', status.value); if (busca.value.trim()) q.set('busca', busca.value.trim());
+    return q.toString();
+  }
+  async function carregar() {
+    tbody.innerHTML = '<tr><td colspan="9" class="hc-empty">Carregando registros...</td></tr>';
+    try { const res = await hcFetch(`/api/registros?${query()}`); render(await res.json()); }
+    catch (e) { tbody.innerHTML = `<tr><td colspan="9" class="hc-empty">${esc(e.message)}</td></tr>`; }
+  }
+  function render(registros) {
+    registrosAtuais = registros;
+    document.getElementById('totalRegistros').textContent = registros.length;
+    const horas = registros.reduce((s, r) => s + Number(r.horasTrabalhadas || 0), 0); const valor = registros.reduce((s, r) => s + Number(r.valorCalculado || 0), 0);
+    document.getElementById('totalHoras').textContent = `${horas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} h`; document.getElementById('totalValor').textContent = moeda.format(valor);
+    if (!registros.length) { tbody.innerHTML = '<tr><td colspan="9" class="hc-empty">Nenhum registro para os filtros selecionados.</td></tr>'; return; }
+    tbody.innerHTML = registros.map(r => `<tr><td>${esc(r.professor.nome)}</td><td><strong>${esc(r.turma ? r.turma.codigo : 'Extra')}</strong><br><span class="hc-muted">${esc(r.turma ? r.turma.nome : r.descricao || 'Atividade extra')}</span></td><td>${dataHora.format(new Date(r.entrada))}</td><td>${r.saida ? dataHora.format(new Date(r.saida)) : '—'}</td><td>${Number(r.horasTrabalhadas || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td><td>${moeda.format(Number(r.valorCalculado || 0))}</td><td><span class="hc-status ${r.status === 'ABERTO' ? 'open' : 'closed'}">${r.status === 'ABERTO' ? 'Aberto' : 'Fechado'}${r.ajustado ? ' · ajustado' : ''}</span></td><td title="${esc(r.observacao || '')}">${esc(r.observacao || '—')}</td><td>${podeAjustar && r.status === 'FECHADO' ? `<button class="hc-btn secondary" data-ajustar="${r.id}">Ajustar</button>` : '—'}</td></tr>`).join('');
+  }
+  form.addEventListener('submit', e => { e.preventDefault(); carregar(); });
+  document.getElementById('limparFiltros').addEventListener('click', () => { form.reset(); periodo.value = 'mes'; aplicarPeriodo(); carregar(); });
+  document.addEventListener('hc:user-ready', e => { podeAjustar = e.detail.perfil !== 'PROFESSOR'; render(registrosAtuais); });
+  const modal = document.getElementById('modalAjuste');
+  document.addEventListener('click', e => { const id = e.target.closest('[data-ajustar]')?.dataset.ajustar; if (!id) return; const r = registrosAtuais.find(x => x.id === Number(id)); document.getElementById('ajusteId').value = id; document.getElementById('ajusteEntrada').value = r.entrada.slice(0,16); document.getElementById('ajusteSaida').value = r.saida.slice(0,16); document.getElementById('ajusteObservacao').value = r.observacao || ''; document.getElementById('ajusteJustificativa').value = ''; modal.classList.add('open'); });
+  document.querySelector('[data-fechar-ajuste]').addEventListener('click', () => modal.classList.remove('open'));
+  document.getElementById('formAjuste').addEventListener('submit', async e => { e.preventDefault(); const id = document.getElementById('ajusteId').value; try { await hcFetch(`/api/registros/${id}/ajustar`, { method:'PUT', body:JSON.stringify({ entrada:document.getElementById('ajusteEntrada').value, saida:document.getElementById('ajusteSaida').value, observacao:document.getElementById('ajusteObservacao').value, justificativa:document.getElementById('ajusteJustificativa').value }) }); hcToast('Registro ajustado e auditado.'); modal.classList.remove('open'); await carregar(); } catch(err) { hcToast(err.message,'error'); } });
+  function esc(v) { const d = document.createElement('div'); d.textContent = v ?? ''; return d.innerHTML; }
+  aplicarPeriodo(); opcoes().then(carregar);
 });

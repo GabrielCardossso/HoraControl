@@ -4,16 +4,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
   @Bean
@@ -21,31 +19,25 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  // CONFIGURAÇÃO EM MEMÓRIA GARANTE QUE O USUÁRIO EXISTIRÁ NO SISTEMA
-  @Bean
-  public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-    UserDetails admin = User.withUsername("admin@sistemaponto.com")
-        .password(encoder.encode("123456"))
-        .roles("USER")
-        .build();
-    return new InMemoryUserDetailsManager(admin);
-  }
-
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/login", "/css/**", "/img/**", "/js/**").permitAll()
+            .requestMatchers("/", "/login", "/css/**", "/img/**", "/js/**", "/error").permitAll()
+            .requestMatchers("/admin/**", "/usuarios", "/gestao-turmas", "/api/admin/**").hasRole("ADMIN")
+            .requestMatchers("/relatorios/geral/**").hasAnyRole("ADMIN", "COORDENADOR_EIXO", "COORDENADOR_NUCLEO")
             .anyRequest().authenticated())
         .formLogin(form -> form
             .loginPage("/login")
             .loginProcessingUrl("/login")
             .defaultSuccessUrl("/perfil", true)
+            .failureUrl("/login?erro")
             .permitAll())
         .logout(logout -> logout
             .logoutUrl("/logout")
-            .logoutSuccessUrl("/login")
+            .logoutSuccessUrl("/login?logout")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
             .permitAll());
 
     return http.build();

@@ -36,4 +36,13 @@ public class HomeController {
   public String configuracoes() {
     return "Configuracoes"; // 👈 Nome exato do seu arquivo: Configuracoes.html
   }
+
+  @GetMapping("/usuarios")
+  public String usuarios() { return "Usuarios"; }
+
+  @GetMapping("/gestao-turmas")
+  public String turmas() { return "Turmas"; }
+
+  @GetMapping("/relatorios")
+  public String relatorios() { return "Relatorios"; }
 }

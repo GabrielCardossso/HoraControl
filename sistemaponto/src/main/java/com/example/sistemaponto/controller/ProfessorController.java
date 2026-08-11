@@ -5,12 +5,15 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.sistemaponto.entity.Professor;
 import com.example.sistemaponto.service.ProfessorService;
+import com.example.sistemaponto.dto.UsuarioRequestDTO;
+import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/professor")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/admin/usuarios")
+@PreAuthorize("hasRole('ADMIN')")
 public class ProfessorController {
 
   @Autowired
@@ -27,15 +30,14 @@ public class ProfessorController {
   }
 
   @PostMapping
-  public Professor salvar(@RequestBody Professor professor) {
-    return service.salvar(professor);
+  public Professor salvar(@Valid @RequestBody UsuarioRequestDTO dto) {
+    return service.criar(dto);
   }
 
   @PutMapping("/{id}")
   public Professor atualizar(@PathVariable Long id,
-      @RequestBody Professor professor) {
-    professor.setId(id);
-    return service.salvar(professor);
+      @Valid @RequestBody UsuarioRequestDTO dto) {
+    return service.atualizar(id, dto);
   }
 
   @DeleteMapping("/{id}")

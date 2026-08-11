@@ -3,10 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login</title>
+    <meta name="theme-color" content="#007acc" />
+    <title>Entrar - HoraControl</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2216%22 fill=%22%23007acc%22/><text x=%2232%22 y=%2241%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 font-weight=%22700%22 fill=%22white%22>HC</text></svg>" />
     <link rel="stylesheet" th:href="@{/css/homepage.css}">
-    <link rel="stylesheet" th:href="@{/css/Interacoes.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
   </head>
 
   <body class="corpo-login-page">
@@ -27,6 +28,8 @@
 
           <!-- CONTAINER DO FORMULÁRIO -->
           <div class="form-login-page">
+            <p th:if="${param.erro}" role="alert" style="color:#b42335;font-weight:700;text-align:center;margin:0 0 14px">E-mail ou senha inválidos.</p>
+            <p th:if="${param.logout}" role="status" style="color:#198754;font-weight:700;text-align:center;margin:0 0 14px">Sessão encerrada com segurança.</p>
             
             <!-- CORRIGIDO: Agora envia os dados para a URL correta do Spring Security -->
             <form th:action="@{/login}" method="POST">
@@ -38,6 +41,7 @@
                 placeholder="E-mail" 
                 class="input-login-page" 
                 required 
+                autocomplete="username"
               />
               
               <!-- Campo de senha -->
@@ -47,9 +51,8 @@
                 placeholder="Senha" 
                 class="input-login-page" 
                 required 
+                autocomplete="current-password"
               />
-              
-              <a href="#" class="forgot-link-login">Esqueci minha senha</a>
               
               <!-- Botão que dispara o envio das credenciais -->
               <button type="submit" class="btn-submit-login">Entrar</button>
@@ -60,6 +63,7 @@
         </div>
       </div>
     </div>
-    <script th:src="@{/js/Interacoes.js}"></script>
+    <button type="button" class="hc-btn secondary" data-theme-toggle style="position:fixed;right:18px;top:18px;z-index:10" aria-label="Alterar tema">◐</button>
+    <script th:src="@{/js/app.js}"></script>
   </body>
 </html>
