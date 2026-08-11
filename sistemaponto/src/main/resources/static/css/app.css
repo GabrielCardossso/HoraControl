@@ -421,6 +421,9 @@ textarea {
   color: var(--hc-text);
 }
 .hc-sidebar-footer [data-theme-toggle] {
+  width: 100%;
+  justify-content: flex-start;
+  padding-inline: 12px;
   border-color: transparent;
   background: transparent;
 }
