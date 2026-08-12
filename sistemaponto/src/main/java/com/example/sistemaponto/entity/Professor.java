@@ -1,5 +1,5 @@
 package com.example.sistemaponto.entity;
-
+//!! Professor é o usuário, porem ele é decidido o tipo via Enums !!
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
