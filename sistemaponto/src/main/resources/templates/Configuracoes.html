@@ -21,7 +21,8 @@
         <nav class="hc-nav">
           <a th:href="@{/perfil}">⌂ <span>Painel</span></a
           ><a th:href="@{/ponto}">◷ <span>Meu ponto</span></a
-          ><a th:href="@{/relatorios}">▤ <span>Relatórios</span></a
+          ><a th:href="@{/relatorios}" data-role="ADMIN" hidden
+            >▤ <span>Relatórios</span></a
           ><a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden
             >▦ <span>Turmas</span></a
           ><a th:href="@{/usuarios}" data-role="ADMIN" hidden

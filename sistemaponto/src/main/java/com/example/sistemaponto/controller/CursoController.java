@@ -35,7 +35,6 @@ public class CursoController {
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public Curso atualizar(@PathVariable Long id, @RequestBody Curso curso) {
-    curso.setId(id);
-    return service.salvar(curso);
+    return service.atualizar(id, curso);
   }
 }

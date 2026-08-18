@@ -21,7 +21,9 @@
         <nav class="hc-nav">
           <a th:href="@{/perfil}" aria-current="page">⌂ <span>Painel</span></a>
           <a th:href="@{/ponto}">◷ <span>Meu ponto</span></a>
-          <a th:href="@{/relatorios}">▤ <span>Relatórios</span></a>
+          <a th:href="@{/relatorios}" data-role="ADMIN" hidden
+            >▤ <span>Relatórios</span></a
+          >
           <a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden
             >▦ <span>Turmas</span></a
           >
@@ -63,7 +65,7 @@
           </div>
         </header>
 
-        <section class="hc-grid three" aria-label="Resumo">
+        <section class="hc-grid two" aria-label="Resumo">
           <article class="hc-card hc-stat">
             <span class="hc-muted">Ponto atual</span
             ><strong id="statusPonto">Carregando...</strong
@@ -74,15 +76,10 @@
             ><strong id="horasMes">0,00 h</strong
             ><small class="hc-muted">Registros fechados</small>
           </article>
-          <article class="hc-card hc-stat">
-            <span class="hc-muted">Valor estimado no mês</span
-            ><strong id="valorMes">R$ 0,00</strong
-            ><small class="hc-muted">Conforme valor-hora das turmas</small>
-          </article>
         </section>
 
-        <section class="hc-grid two" style="margin-top: 20px">
-          <article class="hc-card">
+        <section class="hc-grid two" id="painelPonto" style="margin-top: 20px">
+          <article class="hc-card" id="cardUltimosRegistros">
             <h2>Registrar ponto</h2>
             <p class="hc-muted">
               O horário é registrado pelo servidor para manter a integridade.

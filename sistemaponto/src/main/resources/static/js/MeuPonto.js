@@ -10,10 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const tbody = document.getElementById("corpoRegistros");
   let registrosAtuais = [];
   let podeAjustar = false;
-  const moeda = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
   const dataHora = new Intl.DateTimeFormat("pt-BR", {
     dateStyle: "short",
     timeStyle: "short",
@@ -41,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   periodo.addEventListener("change", () => {
     aplicarPeriodo();
-    carregar();
   });
   inicio.addEventListener("change", () => (periodo.value = "custom"));
   fim.addEventListener("change", () => (periodo.value = "custom"));
@@ -86,12 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   async function carregar() {
     tbody.innerHTML =
-      '<tr><td colspan="9" class="hc-empty">Carregando registros...</td></tr>';
+      '<tr><td colspan="8" class="hc-empty">Carregando registros...</td></tr>';
     try {
       const res = await hcFetch(`/api/registros?${query()}`);
       render(await res.json());
     } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="9" class="hc-empty">${esc(e.message)}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" class="hc-empty">${esc(e.message)}</td></tr>`;
     }
   }
   function render(registros) {
@@ -101,35 +96,46 @@ document.addEventListener("DOMContentLoaded", () => {
       (s, r) => s + Number(r.horasTrabalhadas || 0),
       0,
     );
-    const valor = registros.reduce(
-      (s, r) => s + Number(r.valorCalculado || 0),
-      0,
-    );
     document.getElementById("totalHoras").textContent =
       `${horas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} h`;
-    document.getElementById("totalValor").textContent = moeda.format(valor);
     if (!registros.length) {
       tbody.innerHTML =
-        '<tr><td colspan="9" class="hc-empty">Nenhum registro para os filtros selecionados.</td></tr>';
+        '<tr><td colspan="8" class="hc-empty">Nenhum registro para os filtros selecionados.</td></tr>';
       return;
     }
     tbody.innerHTML = registros
       .map(
         (r) =>
-          `<tr><td>${esc(r.professor.nome)}</td><td><strong>${esc(r.turma ? r.turma.codigo : "Extra")}</strong><br><span class="hc-muted">${esc(r.turma ? r.turma.nome : r.descricao || "Atividade extra")}</span></td><td>${dataHora.format(new Date(r.entrada))}</td><td>${r.saida ? dataHora.format(new Date(r.saida)) : "—"}</td><td>${Number(r.horasTrabalhadas || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${moeda.format(Number(r.valorCalculado || 0))}</td><td><span class="hc-status ${r.status === "ABERTO" ? "open" : "closed"}">${r.status === "ABERTO" ? "Aberto" : "Fechado"}${r.ajustado ? " · ajustado" : ""}</span></td><td title="${esc(r.observacao || "")}">${esc(r.observacao || "—")}</td><td>${podeAjustar && r.status === "FECHADO" ? `<button class="hc-btn secondary" data-ajustar="${r.id}">Ajustar</button>` : "—"}</td></tr>`,
+          `<tr><td>${esc(r.professor.nome)}</td><td><strong>${esc(r.turma ? r.turma.codigo : "Extra")}</strong><br><span class="hc-muted">${esc(r.turma ? r.turma.nome : r.descricao || "Atividade extra")}</span></td><td>${dataHora.format(new Date(r.entrada))}</td><td>${r.saida ? dataHora.format(new Date(r.saida)) : "—"}</td><td>${Number(r.horasTrabalhadas || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td><span class="hc-status ${r.status === "ABERTO" ? "open" : "closed"}">${r.status === "ABERTO" ? "Aberto" : "Fechado"}${r.ajustado ? " · ajustado" : ""}</span></td><td title="${esc(r.observacao || "")}">${esc(r.observacao || "—")}</td><td>${podeAjustar && r.status === "FECHADO" ? `<button class="hc-btn secondary" data-ajustar="${r.id}">Ajustar</button>` : "—"}</td></tr>`,
       )
       .join("");
   }
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+    hcSetFiltersActive("filtrosRegistros", temFiltros());
+    hcCloseFilters("filtrosRegistros");
     carregar();
   });
-  document.getElementById("limparFiltros").addEventListener("click", () => {
-    form.reset();
-    periodo.value = "mes";
-    aplicarPeriodo();
-    carregar();
-  });
+  document.querySelectorAll("[data-limpar-registros]").forEach((button) =>
+    button.addEventListener("click", () => {
+      form.reset();
+      periodo.value = "todos";
+      aplicarPeriodo();
+      hcSetFiltersActive("filtrosRegistros", false);
+      hcCloseFilters("filtrosRegistros");
+      carregar();
+    }),
+  );
+  function temFiltros() {
+    return Boolean(
+      inicio.value ||
+        fim.value ||
+        professor.value ||
+        turma.value ||
+        status.value ||
+        busca.value.trim(),
+    );
+  }
   document.addEventListener("hc:user-ready", (e) => {
     podeAjustar = e.detail.perfil !== "PROFESSOR";
     render(registrosAtuais);

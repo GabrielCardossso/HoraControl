@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("modalUsuario");
   const form = document.getElementById("formUsuario");
   const tbody = document.getElementById("corpoUsuarios");
+  const formFiltros = document.getElementById("formFiltrosUsuarios");
   let usuarios = [];
   let cursos = [];
   let turmas = [];
@@ -22,19 +23,46 @@ document.addEventListener("DOMContentLoaded", () => {
         c.json(),
         t.json(),
       ]);
-      render();
       popularOpcoes();
+      render();
     } catch (e) {
       hcToast(e.message, "error");
     }
   }
   function render() {
-    if (!usuarios.length) {
+    const busca = val("filtroUsuarioBusca").toLocaleLowerCase("pt-BR");
+    const perfil = val("filtroUsuarioPerfil");
+    const cursoId = Number(val("filtroUsuarioCurso")) || null;
+    const turmaId = Number(val("filtroUsuarioTurma")) || null;
+    const status = val("filtroUsuarioStatus");
+    const ordem = val("filtroUsuarioOrdem") || "az";
+    const lista = usuarios
+      .filter((u) => {
+        const texto = `${u.nome || ""} ${u.matricula || ""} ${u.email || ""}`.toLocaleLowerCase("pt-BR");
+        const cursosDoUsuario = new Set([
+          u.cursoResponsavel?.id,
+          ...(u.turmas || []).map((t) => t.curso?.id),
+        ]);
+        return (
+          (!busca || texto.includes(busca)) &&
+          (!perfil || u.perfil === perfil) &&
+          (!cursoId || cursosDoUsuario.has(cursoId)) &&
+          (!turmaId || (u.turmas || []).some((t) => t.id === turmaId)) &&
+          (!status || String(u.ativo) === status)
+        );
+      })
+      .sort((a, b) => {
+        if (ordem === "recentes")
+          return new Date(b.dataCriacao || 0) - new Date(a.dataCriacao || 0);
+        const comparacao = (a.nome || "").localeCompare(b.nome || "", "pt-BR");
+        return ordem === "za" ? -comparacao : comparacao;
+      });
+    if (!lista.length) {
       tbody.innerHTML =
-        '<tr><td colspan="7" class="hc-empty">Nenhum usuário cadastrado.</td></tr>';
+        '<tr><td colspan="7" class="hc-empty">Nenhum usuário encontrado.</td></tr>';
       return;
     }
-    tbody.innerHTML = usuarios
+    tbody.innerHTML = lista
       .map(
         (u) =>
           `<tr><td><strong>${esc(u.nome)}</strong></td><td>${esc(u.matricula || "—")}</td><td>${esc(u.email)}</td><td>${esc((u.perfil || "").replaceAll("_", " "))}</td><td>${esc(u.cursoResponsavel?.nome || (["ADMIN", "COORDENADOR_EIXO", "COORDENADOR_NUCLEO"].includes(u.perfil) ? "Geral" : "Próprio"))}</td><td><span class="hc-status ${u.ativo ? "closed" : "open"}">${u.ativo ? "Ativo" : "Inativo"}</span></td><td><button class="hc-btn secondary" data-editar="${u.id}">Editar</button></td></tr>`,
@@ -42,6 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
   }
   function popularOpcoes() {
+    const filtroCursoAtual = document.getElementById("filtroUsuarioCurso").value;
+    const filtroTurmaAtual = document.getElementById("filtroUsuarioTurma").value;
     document.getElementById("cursoResponsavelId").innerHTML =
       '<option value="">Nenhum/escopo geral</option>' +
       cursos
@@ -56,6 +86,14 @@ document.addEventListener("DOMContentLoaded", () => {
           `<option value="${t.id}">${esc(t.codigo)} - ${esc(t.nome)}</option>`,
       )
       .join("");
+    document.getElementById("filtroUsuarioCurso").innerHTML =
+      '<option value="">Todos</option>' +
+      cursos.map((c) => `<option value="${c.id}">${esc(c.codigo)} - ${esc(c.nome)}</option>`).join("");
+    document.getElementById("filtroUsuarioTurma").innerHTML =
+      '<option value="">Todas</option>' +
+      turmas.map((t) => `<option value="${t.id}">${esc(t.codigo)} - ${esc(t.nome)}</option>`).join("");
+    document.getElementById("filtroUsuarioCurso").value = filtroCursoAtual;
+    document.getElementById("filtroUsuarioTurma").value = filtroTurmaAtual;
   }
   function abrir(u = null) {
     form.reset();
@@ -126,6 +164,31 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.disabled = false;
     }
   });
+  formFiltros.addEventListener("submit", (e) => {
+    e.preventDefault();
+    hcSetFiltersActive("filtrosUsuarios", temFiltros());
+    hcCloseFilters("filtrosUsuarios");
+    render();
+  });
+  document.querySelectorAll("[data-limpar-usuarios]").forEach((button) =>
+    button.addEventListener("click", () => {
+      formFiltros.reset();
+      hcSetFiltersActive("filtrosUsuarios", false);
+      hcCloseFilters("filtrosUsuarios");
+      render();
+    }),
+  );
+  function temFiltros() {
+    return Boolean(
+      val("filtroUsuarioBusca") ||
+        val("filtroUsuarioPerfil") ||
+        val("filtroUsuarioCurso") ||
+        val("filtroUsuarioTurma") ||
+        val("filtroUsuarioStatus") ||
+        val("filtroUsuarioOrdem") === "za" ||
+        val("filtroUsuarioOrdem") === "recentes",
+    );
+  }
   function val(id) {
     return document.getElementById(id).value.trim();
   }

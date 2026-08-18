@@ -12,7 +12,8 @@ document.addEventListener("hc:user-ready", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("formSenha").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const btn = e.currentTarget.querySelector("button");
+    const form = e.currentTarget;
+    const btn = form.querySelector("button");
     btn.disabled = true;
     try {
       const res = await hcFetch("/api/conta/senha", {
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const body = await res.json();
       hcToast(body.mensagem);
-      e.currentTarget.reset();
+      form.reset();
     } catch (error) {
       hcToast(error.message, "error");
     } finally {

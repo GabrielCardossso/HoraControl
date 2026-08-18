@@ -22,7 +22,8 @@
           <a th:href="@{/perfil}">⌂ <span>Painel</span></a
           ><a th:href="@{/ponto}" aria-current="page"
             >◷ <span>Meu ponto</span></a
-          ><a th:href="@{/relatorios}">▤ <span>Relatórios</span></a
+          ><a th:href="@{/relatorios}" data-role="ADMIN" hidden
+            >▤ <span>Relatórios</span></a
           ><a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden
             >▦ <span>Turmas</span></a
           ><a th:href="@{/usuarios}" data-role="ADMIN" hidden
@@ -42,12 +43,35 @@
         <header class="hc-header">
           <div>
             <h1>Registros de ponto</h1>
-            <p>Consulte horas, turmas, valores e observações.</p>
+            <p>Consulte horas, turmas e observações.</p>
           </div>
           <a class="hc-btn primary" th:href="@{/perfil}">Registrar ponto</a>
         </header>
-        <section class="hc-card">
-          <form id="formFiltros">
+        <section class="hc-card" id="filtrosRegistros" data-filter-root>
+          <div class="hc-filter-toolbar">
+            <button
+              class="hc-btn secondary"
+              type="button"
+              data-filter-toggle
+              aria-expanded="false"
+            >
+              Filtros
+              <span class="hc-filter-active-badge" data-filter-active-badge hidden
+                >Ativos</span
+              >
+            </button>
+            <button
+              class="hc-btn secondary"
+              type="button"
+              data-filter-clear-active
+              data-limpar-registros
+              hidden
+            >
+              Limpar filtros
+            </button>
+          </div>
+          <div class="hc-filter-panel" data-filter-panel hidden>
+            <form id="formFiltros">
             <div class="hc-form-grid">
               <div class="hc-field">
                 <label for="periodoRapido">Período</label
@@ -57,7 +81,7 @@
                   <option value="hoje">Hoje</option>
                   <option value="30dias">Últimos 30 dias</option>
                   <option value="custom">Personalizado</option>
-                  <option value="todos">Todos</option>
+                  <option value="todos" selected>Todos</option>
                 </select>
               </div>
               <div class="hc-field">
@@ -101,15 +125,16 @@
                 Aplicar filtros</button
               ><button
                 class="hc-btn secondary"
-                id="limparFiltros"
                 type="button"
+                data-limpar-registros
               >
-                Limpar
+                Limpar filtros
               </button>
             </div>
-          </form>
+            </form>
+          </div>
         </section>
-        <section class="hc-grid three" style="margin-top: 20px">
+        <section class="hc-grid two" style="margin-top: 20px">
           <article class="hc-card hc-stat">
             <span class="hc-muted">Registros</span
             ><strong id="totalRegistros">0</strong>
@@ -117,10 +142,6 @@
           <article class="hc-card hc-stat">
             <span class="hc-muted">Horas trabalhadas</span
             ><strong id="totalHoras">0,00 h</strong>
-          </article>
-          <article class="hc-card hc-stat">
-            <span class="hc-muted">Valor estimado</span
-            ><strong id="totalValor">R$ 0,00</strong>
           </article>
         </section>
         <section class="hc-card" style="margin-top: 20px">
@@ -133,7 +154,6 @@
                   <th>Entrada</th>
                   <th>Saída</th>
                   <th>Horas</th>
-                  <th>Valor</th>
                   <th>Status</th>
                   <th>Observação</th>
                   <th>Ação</th>
@@ -141,7 +161,7 @@
               </thead>
               <tbody id="corpoRegistros">
                 <tr>
-                  <td colspan="9" class="hc-empty">Carregando...</td>
+                  <td colspan="8" class="hc-empty">Carregando...</td>
                 </tr>
               </tbody>
             </table>

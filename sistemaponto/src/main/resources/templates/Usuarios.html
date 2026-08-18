@@ -48,8 +48,81 @@
             + Novo usuário
           </button>
         </header>
-        <section class="hc-card">
-          <div class="hc-table-wrap">
+        <section class="hc-card" id="filtrosUsuarios" data-filter-root>
+          <div class="hc-filter-toolbar">
+            <button
+              class="hc-btn secondary"
+              type="button"
+              data-filter-toggle
+              aria-expanded="false"
+            >
+              Filtros
+              <span class="hc-filter-active-badge" data-filter-active-badge hidden
+                >Ativos</span
+              >
+            </button>
+            <button
+              class="hc-btn secondary"
+              type="button"
+              data-filter-clear-active
+              data-limpar-usuarios
+              hidden
+            >
+              Limpar filtros
+            </button>
+          </div>
+          <div class="hc-filter-panel" data-filter-panel hidden>
+            <form id="formFiltrosUsuarios">
+              <div class="hc-form-grid">
+                <div class="hc-field">
+                  <label for="filtroUsuarioBusca">Nome, matrícula ou e-mail</label>
+                  <input id="filtroUsuarioBusca" placeholder="Buscar usuário" />
+                </div>
+                <div class="hc-field">
+                  <label for="filtroUsuarioPerfil">Perfil</label>
+                  <select id="filtroUsuarioPerfil">
+                    <option value="">Todos</option>
+                    <option value="PROFESSOR">Professor</option>
+                    <option value="COORDENADOR_CURSO">Coordenador de curso</option>
+                    <option value="COORDENADOR_NUCLEO">Coordenador de núcleo</option>
+                    <option value="COORDENADOR_EIXO">Coordenador de eixo</option>
+                    <option value="ADMIN">Administrador</option>
+                  </select>
+                </div>
+                <div class="hc-field">
+                  <label for="filtroUsuarioCurso">Curso</label>
+                  <select id="filtroUsuarioCurso"><option value="">Todos</option></select>
+                </div>
+                <div class="hc-field">
+                  <label for="filtroUsuarioTurma">Turma vinculada</label>
+                  <select id="filtroUsuarioTurma"><option value="">Todas</option></select>
+                </div>
+                <div class="hc-field">
+                  <label for="filtroUsuarioStatus">Situação</label>
+                  <select id="filtroUsuarioStatus">
+                    <option value="">Todos</option>
+                    <option value="true">Ativos</option>
+                    <option value="false">Inativos</option>
+                  </select>
+                </div>
+                <div class="hc-field">
+                  <label for="filtroUsuarioOrdem">Ordenar</label>
+                  <select id="filtroUsuarioOrdem">
+                    <option value="az">Nome A–Z</option>
+                    <option value="za">Nome Z–A</option>
+                    <option value="recentes">Mais recentes</option>
+                  </select>
+                </div>
+              </div>
+              <div class="hc-actions">
+                <button class="hc-btn primary" type="submit">Aplicar filtros</button>
+                <button class="hc-btn secondary" type="button" data-limpar-usuarios>
+                  Limpar filtros
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="hc-table-wrap" style="margin-top: 18px">
             <table class="hc-table">
               <thead>
                 <tr>

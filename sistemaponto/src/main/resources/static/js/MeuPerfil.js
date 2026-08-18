@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const observacao = document.getElementById("observacao");
   const btn = document.getElementById("btnPonto");
   let pontoAberto = null;
+  let quantidadeTurmas = 0;
 
   const hoje = new Date();
   const dataRelogio = document.getElementById("dataRelogio");
@@ -13,36 +14,38 @@ document.addEventListener("DOMContentLoaded", () => {
     dateStyle: "full",
   }).format(hoje);
   dataRelogio.dateTime = hoje.toISOString().slice(0, 10);
-  const moeda = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
   const dataHora = new Intl.DateTimeFormat("pt-BR", {
     dateStyle: "short",
     timeStyle: "short",
   });
 
-  tipo.addEventListener("change", () => {
+  function atualizarTipo() {
     const extra = tipo.value === "ATIVIDADE_EXTRA";
     document.getElementById("campoDescricao").hidden = !extra;
     turma.required = !extra;
-  });
+    if (!pontoAberto) {
+      turma.disabled = !extra && quantidadeTurmas === 0;
+      btn.disabled = !extra && quantidadeTurmas === 0;
+    }
+  }
+  tipo.addEventListener("change", atualizarTipo);
 
   async function carregar() {
     try {
       const inicio = new Date();
       inicio.setDate(1);
       const [turmasRes, abertoRes, registrosRes] = await Promise.all([
-        hcFetch("/api/turmas"),
+        hcFetch("/api/registros/turmas-permitidas"),
         hcFetch("/api/registros/aberto"),
         hcFetch(`/api/registros?inicio=${inicio.toISOString().slice(0, 10)}`),
       ]);
       const turmas = await turmasRes.json();
+      quantidadeTurmas = turmas.length;
       const abertoTexto = await abertoRes.text();
       pontoAberto = abertoTexto ? JSON.parse(abertoTexto) : null;
       const registros = await registrosRes.json();
       turma.innerHTML =
-        '<option value="">Selecione uma turma</option>' +
+        `<option value="">${turmas.length ? "Selecione uma turma" : "Nenhuma turma vinculada ao seu cadastro"}</option>` +
         turmas
           .map(
             (t) =>
@@ -81,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         descricao.disabled =
         observacao.disabled =
           false;
+      atualizarTipo();
     }
   }
 
@@ -90,13 +94,8 @@ document.addEventListener("DOMContentLoaded", () => {
       (s, r) => s + Number(r.horasTrabalhadas || 0),
       0,
     );
-    const valor = fechados.reduce(
-      (s, r) => s + Number(r.valorCalculado || 0),
-      0,
-    );
     document.getElementById("horasMes").textContent =
       `${horas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} h`;
-    document.getElementById("valorMes").textContent = moeda.format(valor);
   }
 
   function renderUltimos(registros) {
@@ -149,6 +148,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       btn.disabled = false;
     }
+  });
+
+  document.addEventListener("hc:user-ready", (e) => {
+    if (e.detail.perfil !== "ADMIN") return;
+    document.getElementById("cardUltimosRegistros").hidden = true;
+    document.getElementById("painelPonto").classList.add("single");
   });
 
   function esc(value) {

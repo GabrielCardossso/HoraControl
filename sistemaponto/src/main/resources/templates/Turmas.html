@@ -20,7 +20,7 @@
         /></a>
         <nav class="hc-nav">
           <a th:href="@{/perfil}">⌂ <span>Painel</span></a
-          ><a th:href="@{/ponto}">◷ <span>Meu ponto</span></a
+          ><a th:href="@{/ponto}">▷ <span>Meu ponto</span></a
           ><a th:href="@{/relatorios}">▤ <span>Relatórios</span></a
           ><a th:href="@{/gestao-turmas}" aria-current="page"
             >▦ <span>Turmas</span></a
@@ -36,155 +36,290 @@
           </form>
         </div>
       </aside>
+
       <main class="hc-main">
         <header class="hc-header">
           <div>
             <h1>Cursos e turmas</h1>
-            <p>
-              Cadastre os códigos utilizados pelo SENAC e o valor de cada
-              hora-aula.
-            </p>
+            <p>Organize os cursos e as turmas utilizados nos registros de ponto.</p>
           </div>
         </header>
-        <section class="hc-grid two">
-          <article class="hc-card">
-            <div class="hc-header">
-              <div><h2>Cursos</h2></div>
-              <button class="hc-btn secondary" id="novoCurso">+ Curso</button>
+
+        <section class="hc-grid">
+          <article class="hc-card" id="filtrosCursos" data-filter-root>
+            <div class="hc-section-head">
+              <div>
+                <h2>Cursos</h2>
+                <p class="hc-muted">Todos os cursos cadastrados no sistema.</p>
+              </div>
+              <button class="hc-btn primary" type="button" id="novoCurso">
+                + Cadastrar curso
+              </button>
             </div>
-            <div id="listaCursos" class="hc-grid">
+            <div class="hc-filter-toolbar">
+              <button class="hc-btn secondary" type="button" data-filter-toggle aria-expanded="false">
+                Filtros
+                <span class="hc-filter-active-badge" data-filter-active-badge hidden>Ativos</span>
+              </button>
+              <button class="hc-btn secondary" type="button" data-filter-clear-active data-limpar-cursos hidden>
+                Limpar filtros
+              </button>
+            </div>
+            <div class="hc-filter-panel" data-filter-panel hidden>
+              <form id="formFiltrosCursos">
+                <div class="hc-form-grid">
+                  <div class="hc-field">
+                    <label for="filtroCursoBusca">Código ou nome</label>
+                    <input id="filtroCursoBusca" placeholder="Buscar curso" />
+                  </div>
+                  <div class="hc-field">
+                    <label for="filtroCursoStatus">Situação</label>
+                    <select id="filtroCursoStatus">
+                      <option value="">Todos</option>
+                      <option value="true">Ativos</option>
+                      <option value="false">Inativos</option>
+                    </select>
+                  </div>
+                  <div class="hc-field">
+                    <label for="filtroCursoOrdem">Ordenar</label>
+                    <select id="filtroCursoOrdem">
+                      <option value="az">Nome A–Z</option>
+                      <option value="za">Nome Z–A</option>
+                      <option value="codigo">Código</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="hc-actions">
+                  <button class="hc-btn primary" type="submit">Aplicar filtros</button>
+                  <button class="hc-btn secondary" type="button" data-limpar-cursos>Limpar filtros</button>
+                </div>
+              </form>
+            </div>
+            <div id="listaCursos" class="hc-management-list">
               <p class="hc-muted">Carregando...</p>
             </div>
           </article>
-          <article class="hc-card">
-            <h2 id="tituloTurma">Nova turma</h2>
-            <form id="formTurma">
-              <input type="hidden" id="turmaId" />
-              <div class="hc-form-grid">
-                <div class="hc-field">
-                  <label for="codigoTurma">Código da turma</label
-                  ><input
-                    id="codigoTurma"
-                    required
-                    maxlength="60"
-                    placeholder="Ex.: 2026.1-TDS-01"
-                  />
-                </div>
-                <div class="hc-field">
-                  <label for="nomeTurma">Nome</label
-                  ><input id="nomeTurma" required maxlength="160" />
-                </div>
-                <div class="hc-field">
-                  <label for="cursoTurma">Curso</label
-                  ><select id="cursoTurma">
-                    <option value="">Sem curso</option>
-                  </select>
-                </div>
-                <div class="hc-field">
-                  <label for="turnoTurma">Turno</label
-                  ><select id="turnoTurma">
-                    <option>Manhã</option>
-                    <option>Tarde</option>
-                    <option>Noite</option>
-                    <option>Integral</option>
-                  </select>
-                </div>
-                <div class="hc-field">
-                  <label for="periodoTurma">Período</label
-                  ><input id="periodoTurma" placeholder="Ex.: 2026.1" />
-                </div>
-                <div class="hc-field">
-                  <label for="valorHora">Valor da hora-aula (R$)</label
-                  ><input
-                    type="number"
-                    id="valorHora"
-                    min="0"
-                    step="0.01"
-                    required
-                  />
-                </div>
-                <div class="hc-field">
-                  <label for="cargaHoraria">Carga horária prevista</label
-                  ><input type="number" id="cargaHoraria" min="0" step="0.5" />
-                </div>
-                <div class="hc-field">
-                  <label for="ativoTurma">Situação</label
-                  ><select id="ativoTurma">
-                    <option value="true">Ativa</option>
-                    <option value="false">Inativa</option>
-                  </select>
-                </div>
-                <div class="hc-field">
-                  <label for="dataInicio">Início</label
-                  ><input type="date" id="dataInicio" />
-                </div>
-                <div class="hc-field">
-                  <label for="dataFim">Término</label
-                  ><input type="date" id="dataFim" />
-                </div>
+
+          <article class="hc-card" id="filtrosTurmas" data-filter-root>
+            <div class="hc-section-head">
+              <div>
+                <h2>Turmas cadastradas</h2>
+                <p class="hc-muted">Todas as turmas, ativas e inativas.</p>
               </div>
-              <div class="hc-actions">
-                <button class="hc-btn primary" type="submit">
-                  Salvar turma</button
-                ><button
-                  class="hc-btn secondary"
-                  type="button"
-                  id="cancelarEdicao"
-                  hidden
-                >
-                  Cancelar edição
-                </button>
-              </div>
-            </form>
+              <button class="hc-btn primary" type="button" id="novaTurma">
+                + Cadastrar turma
+              </button>
+            </div>
+            <div class="hc-filter-toolbar">
+              <button class="hc-btn secondary" type="button" data-filter-toggle aria-expanded="false">
+                Filtros
+                <span class="hc-filter-active-badge" data-filter-active-badge hidden>Ativos</span>
+              </button>
+              <button class="hc-btn secondary" type="button" data-filter-clear-active data-limpar-turmas hidden>
+                Limpar filtros
+              </button>
+            </div>
+            <div class="hc-filter-panel" data-filter-panel hidden>
+              <form id="formFiltrosTurmas">
+                <div class="hc-form-grid">
+                  <div class="hc-field">
+                    <label for="filtroTurmaBusca">Código ou nome</label>
+                    <input id="filtroTurmaBusca" placeholder="Buscar turma" />
+                  </div>
+                  <div class="hc-field">
+                    <label for="filtroTurmaCurso">Curso</label>
+                    <select id="filtroTurmaCurso"><option value="">Todos</option></select>
+                  </div>
+                  <div class="hc-field">
+                    <label for="filtroTurmaTurno">Turno</label>
+                    <select id="filtroTurmaTurno">
+                      <option value="">Todos</option>
+                      <option value="Manhã">Manhã</option>
+                      <option value="Tarde">Tarde</option>
+                      <option value="Noite">Noite</option>
+                      <option value="Integral">Integral</option>
+                    </select>
+                  </div>
+                  <div class="hc-field">
+                    <label for="filtroTurmaStatus">Situação</label>
+                    <select id="filtroTurmaStatus">
+                      <option value="">Todas</option>
+                      <option value="true">Ativas</option>
+                      <option value="false">Inativas</option>
+                    </select>
+                  </div>
+                  <div class="hc-field">
+                    <label for="filtroCargaMinima">Carga mínima</label>
+                    <input type="number" id="filtroCargaMinima" min="0" step="0.5" />
+                  </div>
+                  <div class="hc-field">
+                    <label for="filtroCargaMaxima">Carga máxima</label>
+                    <input type="number" id="filtroCargaMaxima" min="0" step="0.5" />
+                  </div>
+                  <div class="hc-field">
+                    <label for="filtroTurmaOrdem">Ordenar</label>
+                    <select id="filtroTurmaOrdem">
+                      <option value="az">Nome A–Z</option>
+                      <option value="za">Nome Z–A</option>
+                      <option value="cargaAsc">Menor carga horária</option>
+                      <option value="cargaDesc">Maior carga horária</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="hc-actions">
+                  <button class="hc-btn primary" type="submit">Aplicar filtros</button>
+                  <button class="hc-btn secondary" type="button" data-limpar-turmas>Limpar filtros</button>
+                </div>
+              </form>
+            </div>
+            <div class="hc-table-wrap">
+              <table class="hc-table">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Turma</th>
+                    <th>Curso</th>
+                    <th>Período/turno</th>
+                    <th>Carga prevista</th>
+                    <th>Status</th>
+                    <th>Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="corpoTurmas">
+                  <tr>
+                    <td colspan="7" class="hc-empty">Carregando...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </article>
-        </section>
-        <section class="hc-card" style="margin-top: 20px">
-          <h2>Turmas cadastradas</h2>
-          <div class="hc-table-wrap">
-            <table class="hc-table">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Turma</th>
-                  <th>Curso</th>
-                  <th>Período/turno</th>
-                  <th>Valor-hora</th>
-                  <th>Carga prevista</th>
-                  <th>Status</th>
-                  <th>Ação</th>
-                </tr>
-              </thead>
-              <tbody id="corpoTurmas">
-                <tr>
-                  <td colspan="8" class="hc-empty">Carregando...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </section>
       </main>
     </div>
-    <div class="hc-modal" id="modalCurso">
-      <div class="hc-modal-panel" style="max-width: 520px">
+
+    <div
+      class="hc-modal"
+      id="modalCurso"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tituloModalCurso"
+    >
+      <div class="hc-modal-panel" style="max-width: 560px">
         <div class="hc-modal-head">
-          <h2>Novo curso</h2>
-          <button class="hc-btn secondary" data-fechar-curso>Fechar</button>
+          <h2 id="tituloModalCurso">Novo curso</h2>
+          <button class="hc-btn secondary" type="button" data-fechar-modal>
+            Fechar
+          </button>
         </div>
         <form id="formCurso">
-          <div class="hc-field">
-            <label for="codigoCurso">Código</label
-            ><input id="codigoCurso" required maxlength="50" />
+          <input type="hidden" id="cursoId" />
+          <div class="hc-form-grid">
+            <div class="hc-field">
+              <label for="codigoCurso">Código</label
+              ><input id="codigoCurso" required maxlength="50" />
+            </div>
+            <div class="hc-field">
+              <label for="ativoCurso">Situação</label
+              ><select id="ativoCurso">
+                <option value="true">Ativo</option>
+                <option value="false">Inativo</option>
+              </select>
+            </div>
+            <div class="hc-field full">
+              <label for="nomeCurso">Nome</label
+              ><input id="nomeCurso" required maxlength="150" />
+            </div>
           </div>
-          <div class="hc-field" style="margin-top: 14px">
-            <label for="nomeCurso">Nome</label
-            ><input id="nomeCurso" required maxlength="150" />
-          </div>
+          <p class="hc-linked-warning" id="avisoCursoVinculado" hidden></p>
           <div class="hc-actions">
-            <button class="hc-btn primary">Salvar curso</button>
+            <button class="hc-btn primary" type="submit">Salvar curso</button>
+            <button class="hc-btn secondary" type="button" data-fechar-modal>
+              Cancelar
+            </button>
           </div>
         </form>
       </div>
     </div>
+
+    <div
+      class="hc-modal"
+      id="modalTurma"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tituloModalTurma"
+    >
+      <div class="hc-modal-panel">
+        <div class="hc-modal-head">
+          <h2 id="tituloModalTurma">Nova turma</h2>
+          <button class="hc-btn secondary" type="button" data-fechar-modal>
+            Fechar
+          </button>
+        </div>
+        <form id="formTurma">
+          <input type="hidden" id="turmaId" />
+          <div class="hc-form-grid">
+            <div class="hc-field">
+              <label for="codigoTurma">Código da turma</label
+              ><input
+                id="codigoTurma"
+                required
+                maxlength="60"
+                placeholder="Ex.: 2026.1-TDS-01"
+              />
+            </div>
+            <div class="hc-field">
+              <label for="nomeTurma">Nome</label
+              ><input id="nomeTurma" required maxlength="160" />
+            </div>
+            <div class="hc-field">
+              <label for="cursoTurma">Curso</label
+              ><select id="cursoTurma">
+                <option value="">Sem curso</option>
+              </select>
+            </div>
+            <div class="hc-field">
+              <label for="turnoTurma">Turno</label
+              ><select id="turnoTurma">
+                <option>Manhã</option>
+                <option>Tarde</option>
+                <option>Noite</option>
+                <option>Integral</option>
+              </select>
+            </div>
+            <div class="hc-field">
+              <label for="periodoTurma">Período</label
+              ><input id="periodoTurma" placeholder="Ex.: 2026.1" />
+            </div>
+            <div class="hc-field">
+              <label for="cargaHoraria">Carga horária prevista</label
+              ><input type="number" id="cargaHoraria" min="0" step="0.5" />
+            </div>
+            <div class="hc-field">
+              <label for="ativoTurma">Situação</label
+              ><select id="ativoTurma">
+                <option value="true">Ativa</option>
+                <option value="false">Inativa</option>
+              </select>
+            </div>
+            <div class="hc-field">
+              <label for="dataInicio">Início</label
+              ><input type="date" id="dataInicio" />
+            </div>
+            <div class="hc-field">
+              <label for="dataFim">Término</label
+              ><input type="date" id="dataFim" />
+            </div>
+          </div>
+          <div class="hc-actions">
+            <button class="hc-btn primary" type="submit">Salvar turma</button>
+            <button class="hc-btn secondary" type="button" data-fechar-modal>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script th:src="@{/js/app.js}"></script>
     <script th:src="@{/js/Turmas.js}"></script>
   </body>

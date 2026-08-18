@@ -30,4 +30,24 @@ class SecurityAccessTests {
   void adminAcessaGestaoDeUsuarios() throws Exception {
     mvc.perform(get("/usuarios")).andExpect(status().isOk()).andExpect(view().name("Usuarios"));
   }
+
+  @Test @WithMockUser(roles = "ADMIN")
+  void adminAcessaGestaoDeTurmas() throws Exception {
+    mvc.perform(get("/gestao-turmas")).andExpect(status().isOk()).andExpect(view().name("Turmas"));
+  }
+
+  @Test @WithMockUser(roles = "PROFESSOR")
+  void professorNaoAcessaRelatoriosAdministrativos() throws Exception {
+    mvc.perform(get("/relatorios")).andExpect(status().isForbidden());
+  }
+
+  @Test @WithMockUser(roles = "ADMIN")
+  void adminAcessaRelatoriosAdministrativos() throws Exception {
+    mvc.perform(get("/relatorios")).andExpect(status().isOk()).andExpect(view().name("Relatorios"));
+  }
+
+  @Test @WithMockUser(roles = "ADMIN")
+  void exportacaoExcelNaoExisteMais() throws Exception {
+    mvc.perform(get("/api/relatorios/excel")).andExpect(status().isNotFound());
+  }
 }

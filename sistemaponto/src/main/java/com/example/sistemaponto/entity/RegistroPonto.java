@@ -170,12 +170,4 @@ public class RegistroPonto {
     return BigDecimal.valueOf(getMinutosTrabalhados()).divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
   }
 
-  public BigDecimal getValorCalculado() {
-    if (turma == null || turma.getValorHora() == null)
-      return BigDecimal.ZERO;
-    return BigDecimal.valueOf(getMinutosTrabalhados())
-        .multiply(turma.getValorHora())
-        .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
-  }
-
 }

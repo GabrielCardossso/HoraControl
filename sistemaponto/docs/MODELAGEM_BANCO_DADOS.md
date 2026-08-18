@@ -54,7 +54,6 @@ erDiagram
         varchar_160 nome
         varchar_80 periodo
         varchar_40 turno
-        numeric_12_2 valor_hora
         numeric_10_2 carga_horaria_prevista
         date data_inicio
         date data_fim
@@ -128,7 +127,6 @@ Valores de `perfil` previstos pela aplicação: `PROFESSOR`,
 | `nome` | `varchar(160)` | Sim | Nome da turma. |
 | `periodo` | `varchar(80)` | Não | Período acadêmico. |
 | `turno` | `varchar(40)` | Não | Turno da turma. |
-| `valor_hora` | `numeric(12,2)` | Sim | Padrão `0`; usado no cálculo financeiro. |
 | `carga_horaria_prevista` | `numeric(10,2)` | Não | Total de horas planejadas. |
 | `data_inicio` | `date` | Não | Início da turma. |
 | `data_fim` | `date` | Não | Término da turma. |
@@ -219,8 +217,8 @@ A chave primária de `professor_turma (professor_id, turma_id)` também cria um
    com os enums Java.
 3. **Regras temporais sem proteção no banco:** faltam validações para
    `data_fim >= data_inicio` e `saida >= entrada`.
-4. **Valores negativos:** `valor_hora` e `carga_horaria_prevista` não possuem
-   restrições que impeçam números negativos.
+4. **Valores negativos:** `carga_horaria_prevista` não possui restrição que
+   impeça números negativos.
 5. **Coerência do ponto:** o banco não garante que ponto `ABERTO` tenha saída
    nula, que ponto `FECHADO` tenha saída preenchida ou que `AULA_NORMAL` possua
    uma turma.

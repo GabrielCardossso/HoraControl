@@ -27,9 +27,6 @@ public class Turma {
 
   private String turno;
 
-  @Column(nullable = false, precision = 12, scale = 2)
-  private BigDecimal valorHora = BigDecimal.ZERO;
-
   private BigDecimal cargaHorariaPrevista;
   private LocalDate dataInicio;
   private LocalDate dataFim;
@@ -78,14 +75,6 @@ public class Turma {
 
   public void setTurno(String turno) {
     this.turno = turno;
-  }
-
-  public BigDecimal getValorHora() {
-    return valorHora;
-  }
-
-  public void setValorHora(BigDecimal valorHora) {
-    this.valorHora = valorHora;
   }
 
   public Curso getCurso() {

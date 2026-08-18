@@ -51,13 +51,41 @@
         <header class="hc-header">
           <div>
             <h1>Relatórios</h1>
-            <p>Gere documentos detalhados dentro do seu nível de acesso.</p>
+            <p>Gere o relatório administrativo de registros em PDF.</p>
           </div>
         </header>
         <section class="hc-grid two">
-          <article class="hc-card">
-            <h2>Configurar relatório</h2>
-            <form id="formRelatorio">
+          <article class="hc-card" id="filtrosRelatorio" data-filter-root>
+            <div class="hc-section-head">
+              <div><h2>Configurar relatório</h2></div>
+              <button type="button" class="hc-btn danger" id="baixarPdf">
+                Baixar PDF
+              </button>
+            </div>
+            <div class="hc-filter-toolbar">
+              <button
+                class="hc-btn secondary"
+                type="button"
+                data-filter-toggle
+                aria-expanded="false"
+              >
+                Filtros
+                <span class="hc-filter-active-badge" data-filter-active-badge hidden
+                  >Ativos</span
+                >
+              </button>
+              <button
+                class="hc-btn secondary"
+                type="button"
+                data-filter-clear-active
+                data-limpar-relatorio
+                hidden
+              >
+                Limpar filtros
+              </button>
+            </div>
+            <div class="hc-filter-panel" data-filter-panel hidden>
+              <form id="formRelatorio">
               <div class="hc-form-grid">
                 <div class="hc-field">
                   <label for="inicioRelatorio">Data inicial</label>
@@ -98,20 +126,21 @@
               </div>
               <div class="hc-actions">
                 <button
+                  type="submit"
+                  class="hc-btn primary"
+                >
+                  Aplicar filtros
+                </button>
+                <button
                   type="button"
                   class="hc-btn secondary"
-                  id="visualizarRelatorio"
+                  data-limpar-relatorio
                 >
-                  Atualizar prévia
-                </button>
-                <button type="button" class="hc-btn danger" id="baixarPdf">
-                  Baixar PDF
-                </button>
-                <button type="button" class="hc-btn success" id="baixarExcel">
-                  Baixar Excel
+                  Limpar filtros
                 </button>
               </div>
-            </form>
+              </form>
+            </div>
           </article>
           <article class="hc-card">
             <h2>Resumo da prévia</h2>
@@ -124,15 +153,7 @@
                 <span class="hc-muted">Horas fechadas</span
                 ><strong id="previewHoras">0,00 h</strong>
               </div>
-              <div class="hc-stat">
-                <span class="hc-muted">Pagamento estimado</span
-                ><strong id="previewValor">R$ 0,00</strong>
-              </div>
             </div>
-            <p class="hc-muted">
-              O cálculo usa os minutos efetivamente registrados multiplicados
-              pelo valor-hora da turma.
-            </p>
           </article>
         </section>
         <section class="hc-card" style="margin-top: 20px">
@@ -145,14 +166,12 @@
                   <th>Código/turma</th>
                   <th>Data</th>
                   <th>Horas</th>
-                  <th>Valor-hora</th>
-                  <th>Total</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody id="previewTabela">
                 <tr>
-                  <td colspan="7" class="hc-empty">Carregando...</td>
+                  <td colspan="5" class="hc-empty">Carregando...</td>
                 </tr>
               </tbody>
             </table>

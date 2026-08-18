@@ -4,11 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
     professor = document.getElementById("professorRelatorio"),
     turma = document.getElementById("turmaRelatorio"),
     status = document.getElementById("statusRelatorio");
-  const moeda = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
   const data = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" });
+  const form = document.getElementById("formRelatorio");
+  let parametrosAplicados = "";
   const esc = (v) => {
     const d = document.createElement("div");
     d.textContent = v ?? "";
@@ -51,58 +49,66 @@ document.addEventListener("DOMContentLoaded", () => {
   async function preview() {
     const tb = document.getElementById("previewTabela");
     tb.innerHTML =
-      '<tr><td colspan="7" class="hc-empty">Calculando...</td></tr>';
+      '<tr><td colspan="5" class="hc-empty">Calculando...</td></tr>';
     try {
-      const r = await hcFetch(`/api/registros?${query()}`),
+      const r = await hcFetch(`/api/registros?${parametrosAplicados}`),
         lista = await r.json();
       const horas = lista.reduce(
-          (s, x) => s + Number(x.horasTrabalhadas || 0),
-          0,
-        ),
-        valor = lista.reduce((s, x) => s + Number(x.valorCalculado || 0), 0);
+        (s, x) => s + Number(x.horasTrabalhadas || 0),
+        0,
+      );
       document.getElementById("previewRegistros").textContent = lista.length;
       document.getElementById("previewHoras").textContent =
         `${horas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} h`;
-      document.getElementById("previewValor").textContent = moeda.format(valor);
       tb.innerHTML = lista.length
         ? lista
             .slice(0, 50)
             .map(
               (x) =>
-                `<tr><td>${esc(x.professor.nome)}</td><td>${esc(x.turma ? `${x.turma.codigo} - ${x.turma.nome}` : x.descricao || "Extra")}</td><td>${data.format(new Date(x.entrada))}</td><td>${Number(x.horasTrabalhadas || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${moeda.format(Number(x.turma?.valorHora || 0))}</td><td>${moeda.format(Number(x.valorCalculado || 0))}</td><td>${esc(x.status)}</td></tr>`,
+                `<tr><td>${esc(x.professor.nome)}</td><td>${esc(x.turma ? `${x.turma.codigo} - ${x.turma.nome}` : x.descricao || "Extra")}</td><td>${data.format(new Date(x.entrada))}</td><td>${Number(x.horasTrabalhadas || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${esc(x.status)}</td></tr>`,
             )
             .join("")
-        : '<tr><td colspan="7" class="hc-empty">Nenhum registro encontrado.</td></tr>';
+        : '<tr><td colspan="5" class="hc-empty">Nenhum registro encontrado.</td></tr>';
     } catch (e) {
       hcToast(e.message, "error");
     }
   }
-  async function baixar(formato, btn) {
+  async function baixarPdf(btn) {
     btn.disabled = true;
     try {
-      const res = await hcFetch(`/api/relatorios/${formato}?${query()}`);
+      const res = await hcFetch(`/api/relatorios/pdf?${parametrosAplicados}`);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `relatorio-horacontrol-${new Date().toISOString().slice(0, 10)}.${formato === "excel" ? "xlsx" : "pdf"}`;
+      a.download = `relatorio-horacontrol-${new Date().toISOString().slice(0, 10)}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
-      hcToast(`Relatório ${formato === "excel" ? "Excel" : "PDF"} gerado.`);
+      hcToast("Relatório PDF gerado.");
     } catch (e) {
       hcToast(e.message, "error");
     } finally {
       btn.disabled = false;
     }
   }
-  document
-    .getElementById("visualizarRelatorio")
-    .addEventListener("click", preview);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    parametrosAplicados = query();
+    hcSetFiltersActive("filtrosRelatorio", Boolean(parametrosAplicados));
+    hcCloseFilters("filtrosRelatorio");
+    preview();
+  });
+  document.querySelectorAll("[data-limpar-relatorio]").forEach((button) =>
+    button.addEventListener("click", () => {
+      form.reset();
+      parametrosAplicados = "";
+      hcSetFiltersActive("filtrosRelatorio", false);
+      hcCloseFilters("filtrosRelatorio");
+      preview();
+    }),
+  );
   document
     .getElementById("baixarPdf")
-    .addEventListener("click", (e) => baixar("pdf", e.currentTarget));
-  document
-    .getElementById("baixarExcel")
-    .addEventListener("click", (e) => baixar("excel", e.currentTarget));
+    .addEventListener("click", (e) => baixarPdf(e.currentTarget));
   opcoes().then(preview);
 });

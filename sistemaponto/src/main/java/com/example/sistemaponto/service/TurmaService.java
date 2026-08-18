@@ -4,7 +4,6 @@ import com.example.sistemaponto.entity.Turma;
 import com.example.sistemaponto.exception.RegraNegocioException;
 import com.example.sistemaponto.repository.CursoRepository;
 import com.example.sistemaponto.repository.TurmaRepository;
-import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +40,6 @@ public class TurmaService {
         : repository.existsByCodigoIgnoreCaseAndIdNot(turma.getCodigo(), turma.getId());
     if (duplicado)
       throw new RegraNegocioException("Já existe uma turma com este código.");
-    if (turma.getValorHora() == null || turma.getValorHora().compareTo(BigDecimal.ZERO) < 0)
-      throw new RegraNegocioException("O valor da hora deve ser zero ou positivo.");
     if (turma.getCurso() != null && turma.getCurso().getId() != null)
       turma.setCurso(cursoRepository.findById(turma.getCurso().getId())
           .orElseThrow(() -> new RegraNegocioException("Curso não encontrado.")));

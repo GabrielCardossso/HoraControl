@@ -1,6 +1,6 @@
 # HoraControl
 
-Sistema web de controle de ponto de professores horistas, com autenticação por banco de dados, níveis de acesso, turmas identificadas por código, cálculo financeiro e relatórios PDF/Excel.
+Sistema web de controle de ponto de professores horistas, com autenticação por banco de dados, níveis de acesso, turmas identificadas por código e relatórios administrativos em PDF.
 
 ## Tecnologias
 
@@ -8,7 +8,6 @@ Sistema web de controle de ponto de professores horistas, com autenticação por
 - Spring MVC, Security e Data JPA
 - Thymeleaf, HTML, CSS e JavaScript
 - PostgreSQL e Flyway
-- Apache POI para Excel
 - OpenPDF para PDF
 - H2 isolado para testes
 
@@ -31,11 +30,11 @@ O `.env.properties` é ignorado pelo Git. Em hospedagem, configure `DB_URL`, `DB
 
 | Perfil | Pontos visíveis | Relatórios | Administração |
 |---|---|---|---|
-| Professor | Somente os próprios | Somente os próprios | Não |
-| Coordenador de curso | Registros do curso vinculado | Curso vinculado | Não |
-| Coordenador de núcleo | Todos | Todos | Não |
-| Coordenador de eixo | Todos | Todos | Não |
-| Administrador | Todos | Todos | Usuários, cursos e turmas |
+| Professor | Somente os próprios | Não | Não |
+| Coordenador de curso | Registros do curso vinculado | Não | Não |
+| Coordenador de núcleo | Todos | Não | Não |
+| Coordenador de eixo | Todos | Não | Não |
+| Administrador | Todos | PDF | Usuários, cursos e turmas |
 
 Somente o administrador cria e gerencia contas. Não existe cadastro público.
 
@@ -44,10 +43,8 @@ Somente o administrador cria e gerencia contas. Não existe cadastro público.
 - Cada professor pode possuir somente um ponto aberto.
 - A entrada e a saída usam o horário do servidor.
 - Aula normal exige uma turma ativa.
-- Professor com turmas vinculadas só registra aula nessas turmas.
+- Professor só registra aula nas turmas vinculadas ao seu cadastro; sem vínculo, nenhuma turma é liberada.
 - Fechamento altera o registro para `FECHADO`.
-- O total é calculado por minutos trabalhados multiplicados pelo valor-hora da turma.
-- Registros abertos não geram valor financeiro.
 - Código de turma, e-mail, matrícula e CPF possuem regras de unicidade quando informados.
 - Exclusão de usuário ou turma é lógica: o cadastro é inativado para preservar histórico.
 
@@ -61,7 +58,7 @@ O Flyway executa scripts em `src/main/resources/db/migration`. O Hibernate utili
 .\mvnw.cmd clean test
 ```
 
-Os testes usam H2 em memória e nunca acessam o PostgreSQL local. Há verificações de contexto, permissões, regras de ponto e validade dos arquivos PDF/Excel.
+Os testes usam H2 em memória e nunca acessam o PostgreSQL local. Há verificações de contexto, permissões, regras de ponto e validade do arquivo PDF.
 
 ## Estrutura
 

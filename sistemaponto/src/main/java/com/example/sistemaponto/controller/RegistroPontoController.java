@@ -4,6 +4,7 @@ import com.example.sistemaponto.dto.AbrirPontoDTO;
 import com.example.sistemaponto.dto.AjustarPontoDTO;
 import com.example.sistemaponto.entity.RegistroPonto;
 import com.example.sistemaponto.entity.Professor;
+import com.example.sistemaponto.entity.Turma;
 import com.example.sistemaponto.enums.StatusPonto;
 import com.example.sistemaponto.enums.TipoRegistro;
 import com.example.sistemaponto.service.RegistroPontoService;
@@ -64,5 +65,10 @@ public class RegistroPontoController {
   @GetMapping("/professores/visiveis")
   public List<Professor> professores(Principal principal) {
     return service.professoresVisiveis(principal.getName());
+  }
+
+  @GetMapping("/turmas-permitidas")
+  public List<Turma> turmasPermitidas(Principal principal) {
+    return service.turmasPermitidas(principal.getName());
   }
 }

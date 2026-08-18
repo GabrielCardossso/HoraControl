@@ -49,7 +49,7 @@ public class RegistroPontoService {
       if (!turma.isAtivo())
         throw new RegraNegocioException("Esta turma está inativa.");
       Long turmaSelecionadaId = turma.getId();
-      if (professor.getPerfil() == Perfil.PROFESSOR && !professor.getTurmas().isEmpty()
+      if (professor.getPerfil() == Perfil.PROFESSOR
           && professor.getTurmas().stream().noneMatch(t -> t.getId().equals(turmaSelecionadaId)))
         throw new RegraNegocioException("Esta turma não está vinculada ao seu cadastro.");
     }
@@ -165,6 +165,17 @@ public class RegistroPontoService {
     mapa.put(solicitante.getId(), solicitante);
     visiveis(solicitante).forEach(r -> mapa.put(r.getProfessor().getId(), r.getProfessor()));
     return mapa.values().stream().sorted(java.util.Comparator.comparing(Professor::getNome)).toList();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Turma> turmasPermitidas(String email) {
+    Professor solicitante = usuario(email);
+    if (solicitante.getPerfil() != Perfil.PROFESSOR)
+      return turmaRepository.findByAtivoTrueOrderByCodigoAsc();
+    return solicitante.getTurmas().stream()
+        .filter(Turma::isAtivo)
+        .sorted(java.util.Comparator.comparing(Turma::getCodigo, String.CASE_INSENSITIVE_ORDER))
+        .toList();
   }
 
   public RegistroPonto buscar(Long id, String email) {

@@ -17,6 +17,7 @@ import com.example.sistemaponto.repository.ProfessorRepository;
 import com.example.sistemaponto.repository.RegistroPontoRepository;
 import com.example.sistemaponto.repository.TurmaRepository;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +51,29 @@ class RegistroPontoServiceTest {
     when(registros.findByProfessorIdAndStatus(1L, StatusPonto.ABERTO)).thenReturn(Optional.empty());
     AbrirPontoDTO dto = new AbrirPontoDTO(); dto.setTipo(TipoRegistro.AULA_NORMAL);
     assertThatThrownBy(() -> service.abrir("p@teste.com", dto)).hasMessageContaining("Selecione uma turma");
+  }
+
+  @Test void professorNaoAbrePontoEmTurmaSemVinculo() {
+    Turma permitida = new Turma(); permitida.setId(2L); permitida.setCodigo("PERMITIDA"); permitida.setAtivo(true);
+    Turma bloqueada = new Turma(); bloqueada.setId(3L); bloqueada.setCodigo("BLOQUEADA"); bloqueada.setAtivo(true);
+    professor.setTurmas(Set.of(permitida));
+    when(registros.findByProfessorIdAndStatus(1L, StatusPonto.ABERTO)).thenReturn(Optional.empty());
+    when(turmas.findById(3L)).thenReturn(Optional.of(bloqueada));
+    AbrirPontoDTO dto = new AbrirPontoDTO(); dto.setTipo(TipoRegistro.AULA_NORMAL); dto.setTurmaId(3L);
+
+    assertThatThrownBy(() -> service.abrir("p@teste.com", dto))
+        .hasMessageContaining("não está vinculada");
+    verify(registros, never()).save(any());
+  }
+
+  @Test void professorSemTurmasNaoAbreAulaEmQualquerTurma() {
+    Turma turma = new Turma(); turma.setId(3L); turma.setCodigo("SEM-ACESSO"); turma.setAtivo(true);
+    when(registros.findByProfessorIdAndStatus(1L, StatusPonto.ABERTO)).thenReturn(Optional.empty());
+    when(turmas.findById(3L)).thenReturn(Optional.of(turma));
+    AbrirPontoDTO dto = new AbrirPontoDTO(); dto.setTipo(TipoRegistro.AULA_NORMAL); dto.setTurmaId(3L);
+
+    assertThatThrownBy(() -> service.abrir("p@teste.com", dto))
+        .hasMessageContaining("não está vinculada");
   }
 
   @Test void administradorAjustaComTrilhaDeAuditoria() {

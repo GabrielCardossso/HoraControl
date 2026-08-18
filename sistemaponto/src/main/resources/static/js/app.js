@@ -47,6 +47,38 @@
     );
   };
 
+  window.hcSetFiltersActive = (root, active) => {
+    const container =
+      typeof root === "string" ? document.getElementById(root) : root;
+    if (!container) return;
+    container.dataset.filtersActive = String(Boolean(active));
+    container
+      .querySelectorAll("[data-filter-clear-active]")
+      .forEach((button) => (button.hidden = !active));
+    const badge = container.querySelector("[data-filter-active-badge]");
+    if (badge) badge.hidden = !active;
+  };
+
+  window.hcCloseFilters = (root) => {
+    const container =
+      typeof root === "string" ? document.getElementById(root) : root;
+    const panel = container?.querySelector("[data-filter-panel]");
+    const toggle = container?.querySelector("[data-filter-toggle]");
+    if (!panel || !toggle) return;
+    panel.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
+  };
+
+  document.addEventListener("click", (event) => {
+    const toggle = event.target.closest("[data-filter-toggle]");
+    if (!toggle) return;
+    const root = toggle.closest("[data-filter-root]");
+    const panel = root?.querySelector("[data-filter-panel]");
+    if (!panel) return;
+    panel.hidden = !panel.hidden;
+    toggle.setAttribute("aria-expanded", String(!panel.hidden));
+  });
+
   const themeOrder = ["system", "light", "dark"];
   const labels = {
     system: "Tema: sistema",

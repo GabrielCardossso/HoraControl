@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,8 +25,9 @@ public class RelatorioController {
     this.relatorios = relatorios;
   }
 
-  @GetMapping("/{formato}")
-  public ResponseEntity<byte[]> gerar(@PathVariable String formato,
+  @GetMapping("/pdf")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<byte[]> gerarPdf(
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
       @RequestParam(required = false) Long professorId,
@@ -38,13 +40,8 @@ public class RelatorioController {
         busca);
     String titulo = "HoraControl - Relatório de Ponto";
     String data = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
-    if ("pdf".equalsIgnoreCase(formato))
-      return arquivo(relatorios.gerarPdf(lista, titulo), MediaType.APPLICATION_PDF, "relatorio-ponto-" + data + ".pdf");
-    if ("excel".equalsIgnoreCase(formato) || "xlsx".equalsIgnoreCase(formato))
-      return arquivo(relatorios.gerarExcel(lista, titulo),
-          MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-          "relatorio-ponto-" + data + ".xlsx");
-    return ResponseEntity.badRequest().build();
+    return arquivo(relatorios.gerarPdf(lista, titulo), MediaType.APPLICATION_PDF,
+        "relatorio-ponto-" + data + ".pdf");
   }
 
   private ResponseEntity<byte[]> arquivo(byte[] bytes, MediaType tipo, String nome) {
