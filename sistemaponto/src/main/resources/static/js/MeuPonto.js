@@ -92,12 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function render(registros) {
     registrosAtuais = registros;
     document.getElementById("totalRegistros").textContent = registros.length;
-    const horas = registros.reduce(
-      (s, r) => s + Number(r.horasTrabalhadas || 0),
+    const minutos = registros.reduce(
+      (s, r) => s + hcMinutesFromRecord(r),
       0,
     );
     document.getElementById("totalHoras").textContent =
-      `${horas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} h`;
+      hcFormatMinutes(minutos);
     if (!registros.length) {
       tbody.innerHTML =
         '<tr><td colspan="8" class="hc-empty">Nenhum registro para os filtros selecionados.</td></tr>';
@@ -105,8 +105,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     tbody.innerHTML = registros
       .map(
-        (r) =>
-          `<tr><td>${esc(r.professor.nome)}</td><td><strong>${esc(r.turma ? r.turma.codigo : "Extra")}</strong><br><span class="hc-muted">${esc(r.turma ? r.turma.nome : r.descricao || "Atividade extra")}</span></td><td>${dataHora.format(new Date(r.entrada))}</td><td>${r.saida ? dataHora.format(new Date(r.saida)) : "—"}</td><td>${Number(r.horasTrabalhadas || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td><span class="hc-status ${r.status === "ABERTO" ? "open" : "closed"}">${r.status === "ABERTO" ? "Aberto" : "Fechado"}${r.ajustado ? " · ajustado" : ""}</span></td><td title="${esc(r.observacao || "")}">${esc(r.observacao || "—")}</td><td>${podeAjustar && r.status === "FECHADO" ? `<button class="hc-btn secondary" data-ajustar="${r.id}">Ajustar</button>` : "—"}</td></tr>`,
+        (r) => {
+          const acoes = [
+            `<button class="hc-btn secondary" type="button" data-detalhes-registro="${r.id}"><i class="fi fi-rr-eye" aria-hidden="true"></i>Ver detalhes</button>`,
+          ];
+          if (podeAjustar && r.status === "FECHADO")
+            acoes.push(
+              `<button class="hc-btn secondary" type="button" data-ajustar="${r.id}"><i class="fi fi-rr-edit" aria-hidden="true"></i>Ajustar</button>`,
+            );
+          return `<tr><td data-label="Professor">${esc(r.professor.nome)}</td><td data-label="Turma/atividade"><strong>${esc(r.turma ? r.turma.codigo : "Extra")}</strong><br><span class="hc-muted">${esc(r.turma ? r.turma.nome : r.descricao || "Atividade extra")}</span></td><td data-label="Entrada">${dataHora.format(new Date(r.entrada))}</td><td data-label="Saída">${r.saida ? dataHora.format(new Date(r.saida)) : "—"}</td><td data-label="Horas">${hcFormatMinutes(hcMinutesFromRecord(r))}</td><td data-label="Status"><span class="hc-status ${r.status === "ABERTO" ? "open" : "closed"}">${r.status === "ABERTO" ? "Aberto" : "Fechado"}${r.ajustado ? " · ajustado" : ""}</span></td><td data-label="Observação">${esc(r.observacao || "Sem observação")}</td><td data-label="Ações"><div class="hc-row-actions">${acoes.join("")}</div></td></tr>`;
+        },
       )
       .join("");
   }
@@ -141,7 +149,66 @@ document.addEventListener("DOMContentLoaded", () => {
     render(registrosAtuais);
   });
   const modal = document.getElementById("modalAjuste");
+  const modalDetalhes = document.getElementById("modalDetalhesRegistro");
+  let gatilhoDetalhes = null;
+
+  function abrirDetalhes(registro, gatilho) {
+    gatilhoDetalhes = gatilho;
+    const atividade = registro.turma
+      ? `${registro.turma.codigo} - ${registro.turma.nome}`
+      : registro.descricao || "Atividade extra";
+    document.getElementById("detalheProfessor").textContent =
+      registro.professor?.nome || "—";
+    document.getElementById("detalheAtividade").textContent = atividade;
+    document.getElementById("detalheEntrada").textContent = dataHora.format(
+      new Date(registro.entrada),
+    );
+    document.getElementById("detalheSaida").textContent = registro.saida
+      ? dataHora.format(new Date(registro.saida))
+      : "Em aberto";
+    document.getElementById("detalheDuracao").textContent = hcFormatMinutes(
+      hcMinutesFromRecord(registro),
+    );
+    document.getElementById("detalheStatus").textContent =
+      registro.status === "ABERTO" ? "Aberto" : "Fechado";
+    document.getElementById("detalheObservacao").textContent =
+      registro.observacao || "Nenhuma observação informada.";
+
+    const blocoAjuste = document.getElementById("detalheAjuste");
+    const semAjuste = document.getElementById("detalheSemAjuste");
+    blocoAjuste.hidden = !registro.ajustado;
+    semAjuste.hidden = registro.ajustado;
+    if (registro.ajustado) {
+      document.getElementById("detalheJustificativa").textContent =
+        registro.justificativaAjuste || "Justificativa não informada.";
+      document.getElementById("detalheAlteradoPor").textContent =
+        registro.alteradoPor?.nome || "Responsável não informado";
+      document.getElementById("detalheDataAlteracao").textContent =
+        registro.dataAlteracao
+          ? dataHora.format(new Date(registro.dataAlteracao))
+          : "Data não informada";
+    }
+    modalDetalhes.classList.add("open");
+    document.body.classList.add("hc-modal-open");
+    modalDetalhes.querySelector("[data-fechar-detalhes]").focus();
+  }
+
+  function fecharDetalhes() {
+    modalDetalhes.classList.remove("open");
+    if (!document.querySelector(".hc-modal.open"))
+      document.body.classList.remove("hc-modal-open");
+    gatilhoDetalhes?.focus();
+  }
+
   document.addEventListener("click", (e) => {
+    const botaoDetalhes = e.target.closest("[data-detalhes-registro]");
+    if (botaoDetalhes) {
+      const registro = registrosAtuais.find(
+        (item) => item.id === Number(botaoDetalhes.dataset.detalhesRegistro),
+      );
+      if (registro) abrirDetalhes(registro, botaoDetalhes);
+      return;
+    }
     const id = e.target.closest("[data-ajustar]")?.dataset.ajustar;
     if (!id) return;
     const r = registrosAtuais.find((x) => x.id === Number(id));
@@ -151,6 +218,16 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("ajusteObservacao").value = r.observacao || "";
     document.getElementById("ajusteJustificativa").value = "";
     modal.classList.add("open");
+  });
+  document
+    .querySelector("[data-fechar-detalhes]")
+    .addEventListener("click", fecharDetalhes);
+  modalDetalhes.addEventListener("click", (e) => {
+    if (e.target === modalDetalhes) fecharDetalhes();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modalDetalhes.classList.contains("open"))
+      fecharDetalhes();
   });
   document
     .querySelector("[data-fechar-ajuste]")

@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>${esc(curso.nome)}</p>
                 <small class="hc-muted">${vinculadas} ${vinculadas === 1 ? "turma vinculada" : "turmas vinculadas"}</small>
               </div>
-              <button class="hc-btn secondary" type="button" data-editar-curso="${curso.id}">Editar</button>
+              <button class="hc-btn secondary" type="button" data-editar-curso="${curso.id}"><i class="fi fi-rr-edit" aria-hidden="true"></i>Editar</button>
             </div>`;
           })
           .join("")
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ? turmasExibidas
           .map(
             (turma) =>
-              `<tr><td><strong>${esc(turma.codigo)}</strong></td><td>${esc(turma.nome)}</td><td>${esc(turma.curso?.nome || "—")}</td><td>${esc(turma.periodo || "—")} / ${esc(turma.turno || "—")}</td><td>${turma.cargaHorariaPrevista == null ? "—" : `${esc(turma.cargaHorariaPrevista)} h`}</td><td><span class="hc-status ${turma.ativo ? "closed" : "open"}">${turma.ativo ? "Ativa" : "Inativa"}</span></td><td><button class="hc-btn secondary" type="button" data-editar-turma="${turma.id}">Editar</button></td></tr>`,
+              `<tr><td data-label="Código"><strong>${esc(turma.codigo)}</strong></td><td data-label="Turma">${esc(turma.nome)}</td><td data-label="Curso">${esc(turma.curso?.nome || "—")}</td><td data-label="Período/turno">${esc(turma.periodo || "—")} / ${esc(turma.turno || "—")}</td><td data-label="Carga prevista">${turma.cargaHorariaPrevista == null ? "—" : hcFormatHours(turma.cargaHorariaPrevista)}</td><td data-label="Status"><span class="hc-status ${turma.ativo ? "closed" : "open"}">${turma.ativo ? "Ativa" : "Inativa"}</span></td><td data-label="Ação"><button class="hc-btn secondary" type="button" data-editar-turma="${turma.id}"><i class="fi fi-rr-edit" aria-hidden="true"></i>Editar</button></td></tr>`,
           )
           .join("")
       : '<tr><td colspan="7" class="hc-empty">Nenhuma turma encontrada.</td></tr>';

@@ -7,7 +7,7 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>Usuários - HoraControl</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <link rel="stylesheet" th:href="@{/css/app.css(v=8)}" />
   </head>
   <body class="hc-app">
     <div class="hc-shell">
@@ -19,20 +19,18 @@
             alt="Senac"
         /></a>
         <nav class="hc-nav">
-          <a th:href="@{/perfil}">⌂ <span>Painel</span></a
-          ><a th:href="@{/ponto}">◷ <span>Meu ponto</span></a
-          ><a th:href="@{/relatorios}">▤ <span>Relatórios</span></a
-          ><a th:href="@{/gestao-turmas}">▦ <span>Turmas</span></a
+          <a th:href="@{/perfil}"><i class="fi fi-rr-home" aria-hidden="true"></i><span>Painel</span></a
+          ><a th:href="@{/ponto}"><i class="fi fi-rr-time-check" aria-hidden="true"></i><span>Meu ponto</span></a
+          ><a th:href="@{/relatorios}"><i class="fi fi-rr-document" aria-hidden="true"></i><span>Relatórios</span></a
+          ><a th:href="@{/gestao-turmas}"><i class="fi fi-rr-graduation-cap" aria-hidden="true"></i><span>Turmas</span></a
           ><a th:href="@{/usuarios}" aria-current="page"
-            >♙ <span>Usuários</span></a
-          ><a th:href="@{/configuracoes}">⚙ <span>Configurações</span></a>
+            ><i class="fi fi-rr-users" aria-hidden="true"></i><span>Usuários</span></a
+          ><a th:href="@{/configuracoes}"><i class="fi fi-rr-settings" aria-hidden="true"></i><span>Configurações</span></a>
         </nav>
         <div class="hc-sidebar-footer">
-          <button type="button" class="hc-btn secondary" data-theme-toggle>
-            ◐
-          </button>
+          <button type="button" class="hc-btn secondary" data-theme-toggle></button>
           <form th:action="@{/logout}" method="post">
-            <button class="hc-logout">Sair</button>
+            <button class="hc-logout"><i class="fi fi-rr-sign-out-alt" aria-hidden="true"></i>Sair</button>
           </form>
         </div>
       </aside>
@@ -45,7 +43,7 @@
             </p>
           </div>
           <button class="hc-btn primary" id="novoUsuario">
-            + Novo usuário
+            Novo usuário
           </button>
         </header>
         <section class="hc-card" id="filtrosUsuarios" data-filter-root>
@@ -55,6 +53,7 @@
               type="button"
               data-filter-toggle
               aria-expanded="false"
+              aria-controls="modalFiltrosUsuarios"
             >
               Filtros
               <span class="hc-filter-active-badge" data-filter-active-badge hidden
@@ -71,8 +70,13 @@
               Limpar filtros
             </button>
           </div>
-          <div class="hc-filter-panel" data-filter-panel hidden>
-            <form id="formFiltrosUsuarios">
+          <div class="hc-modal hc-filter-modal" id="modalFiltrosUsuarios" data-filter-panel role="dialog" aria-modal="true" aria-labelledby="tituloFiltrosUsuarios" hidden>
+            <div class="hc-modal-panel">
+              <div class="hc-modal-head">
+                <h2 id="tituloFiltrosUsuarios">Filtrar usuários</h2>
+                <button class="hc-btn secondary" type="button" data-filter-close>Fechar</button>
+              </div>
+              <form id="formFiltrosUsuarios">
               <div class="hc-form-grid">
                 <div class="hc-field">
                   <label for="filtroUsuarioBusca">Nome, matrícula ou e-mail</label>
@@ -120,7 +124,8 @@
                   Limpar filtros
                 </button>
               </div>
-            </form>
+              </form>
+            </div>
           </div>
           <div class="hc-table-wrap" style="margin-top: 18px">
             <table class="hc-table">
@@ -233,7 +238,7 @@
         </form>
       </div>
     </div>
-    <script th:src="@{/js/app.js}"></script>
-    <script th:src="@{/js/Usuarios.js}"></script>
+    <script th:src="@{/js/app.js(v=8)}"></script>
+    <script th:src="@{/js/Usuarios.js(v=8)}"></script>
   </body>
 </html>

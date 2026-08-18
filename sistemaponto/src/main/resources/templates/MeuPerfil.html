@@ -7,7 +7,7 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>Meu painel - HoraControl</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <link rel="stylesheet" th:href="@{/css/app.css(v=8)}" />
   </head>
   <body class="hc-app">
     <div class="hc-shell">
@@ -19,18 +19,18 @@
             alt="Senac"
         /></a>
         <nav class="hc-nav">
-          <a th:href="@{/perfil}" aria-current="page">⌂ <span>Painel</span></a>
-          <a th:href="@{/ponto}">◷ <span>Meu ponto</span></a>
+          <a th:href="@{/perfil}" aria-current="page"><i class="fi fi-rr-home" aria-hidden="true"></i><span>Painel</span></a>
+          <a th:href="@{/ponto}"><i class="fi fi-rr-time-check" aria-hidden="true"></i><span>Meu ponto</span></a>
           <a th:href="@{/relatorios}" data-role="ADMIN" hidden
-            >▤ <span>Relatórios</span></a
+            ><i class="fi fi-rr-document" aria-hidden="true"></i><span>Relatórios</span></a
           >
           <a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden
-            >▦ <span>Turmas</span></a
+            ><i class="fi fi-rr-graduation-cap" aria-hidden="true"></i><span>Turmas</span></a
           >
           <a th:href="@{/usuarios}" data-role="ADMIN" hidden
-            >♙ <span>Usuários</span></a
+            ><i class="fi fi-rr-users" aria-hidden="true"></i><span>Usuários</span></a
           >
-          <a th:href="@{/configuracoes}">⚙ <span>Configurações</span></a>
+          <a th:href="@{/configuracoes}"><i class="fi fi-rr-settings" aria-hidden="true"></i><span>Configurações</span></a>
         </nav>
         <div class="hc-sidebar-footer">
           <button
@@ -38,103 +38,149 @@
             class="hc-btn secondary"
             data-theme-toggle
             aria-label="Alterar tema"
-          >
-            ◐
-          </button>
+          ></button>
           <form th:action="@{/logout}" method="post">
-            <button class="hc-logout" type="submit">Sair</button>
+            <button class="hc-logout" type="submit"><i class="fi fi-rr-sign-out-alt" aria-hidden="true"></i>Sair</button>
           </form>
         </div>
       </aside>
       <main class="hc-main">
         <header class="hc-header">
           <div>
-            <h1>Olá, <span data-user-name>professor</span>!</h1>
-            <p class="hc-header-description">
+            <h1 id="tituloPainel">Olá, <span data-user-name>professor</span>!</h1>
+            <p class="hc-header-description" id="descricaoPainel">
               Acompanhe sua jornada e seus registros.
             </p>
           </div>
           <div class="hc-date-display" aria-label="Data de hoje">
-            <svg class="hc-date-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M7 3v3m10-3v3M4 9h16M5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-12A1.5 1.5 0 0 1 5.5 5Z"
-              />
-              <path d="M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01" />
-            </svg>
+            <span class="hc-date-icon" aria-hidden="true">
+              <i class="fi fi-rr-calendar-day"></i>
+            </span>
             <time id="dataRelogio">Carregando data...</time>
           </div>
         </header>
 
-        <section class="hc-grid two" aria-label="Resumo">
-          <article class="hc-card hc-stat">
-            <span class="hc-muted">Ponto atual</span
-            ><strong id="statusPonto">Carregando...</strong
-            ><small id="horaEntrada" class="hc-muted"></small>
-          </article>
-          <article class="hc-card hc-stat">
-            <span class="hc-muted">Horas neste mês</span
-            ><strong id="horasMes">0,00 h</strong
-            ><small class="hc-muted">Registros fechados</small>
-          </article>
-        </section>
+        <div id="painelProfessor" hidden>
+          <section class="hc-grid two" aria-label="Resumo">
+            <article class="hc-card hc-stat">
+              <span class="hc-muted">Ponto atual</span
+              ><strong id="statusPonto">Carregando...</strong
+              ><small id="horaEntrada" class="hc-muted"></small>
+            </article>
+            <article class="hc-card hc-stat">
+              <span class="hc-muted">Horas neste mês</span
+              ><strong id="horasMes">00h00m</strong
+              ><small class="hc-muted">Registros fechados</small>
+            </article>
+          </section>
 
-        <section class="hc-grid two" id="painelPonto" style="margin-top: 20px">
-          <article class="hc-card" id="cardUltimosRegistros">
-            <h2>Registrar ponto</h2>
-            <p class="hc-muted">
-              O horário é registrado pelo servidor para manter a integridade.
-            </p>
-            <form id="formPonto">
-              <div class="hc-form-grid">
-                <div class="hc-field">
-                  <label for="tipoRegistro">Tipo de atividade</label
-                  ><select id="tipoRegistro" required>
-                    <option value="AULA_NORMAL">Aula normal</option>
-                    <option value="ATIVIDADE_EXTRA">Atividade extra</option>
-                  </select>
+          <section class="hc-grid two" id="painelPonto" style="margin-top: 20px">
+            <article class="hc-card">
+              <h2>Registrar ponto</h2>
+              <p class="hc-muted">
+                O horário é registrado pelo servidor para manter a integridade.
+              </p>
+              <form id="formPonto">
+                <div class="hc-form-grid">
+                  <div class="hc-field">
+                    <label for="tipoRegistro">Tipo de atividade</label
+                    ><select id="tipoRegistro" required>
+                      <option value="AULA_NORMAL">Aula normal</option>
+                      <option value="ATIVIDADE_EXTRA">Atividade extra</option>
+                    </select>
+                  </div>
+                  <div class="hc-field" id="campoTurma">
+                    <label for="turmaId">Turma</label
+                    ><select id="turmaId">
+                      <option value="">Carregando turmas...</option>
+                    </select>
+                  </div>
+                  <div class="hc-field full" id="campoDescricao" hidden>
+                    <label for="descricao">Descrição da atividade</label
+                    ><input
+                      id="descricao"
+                      maxlength="180"
+                      placeholder="Ex.: reunião pedagógica"
+                    />
+                  </div>
+                  <div class="hc-field full">
+                    <label for="observacao">Observações</label
+                    ><textarea
+                      id="observacao"
+                      maxlength="1000"
+                      placeholder="Conteúdo ministrado, ocorrências ou detalhes importantes"
+                    ></textarea>
+                  </div>
                 </div>
-                <div class="hc-field" id="campoTurma">
-                  <label for="turmaId">Turma</label
-                  ><select id="turmaId">
-                    <option value="">Carregando turmas...</option>
-                  </select>
+                <div class="hc-actions">
+                  <button id="btnPonto" class="hc-btn primary" type="submit">
+                    Registrar entrada</button
+                  ><a class="hc-btn secondary" th:href="@{/ponto}"
+                    >Ver histórico</a
+                  >
                 </div>
-                <div class="hc-field full" id="campoDescricao" hidden>
-                  <label for="descricao">Descrição da atividade</label
-                  ><input
-                    id="descricao"
-                    maxlength="180"
-                    placeholder="Ex.: reunião pedagógica"
-                  />
-                </div>
-                <div class="hc-field full">
-                  <label for="observacao">Observações</label
-                  ><textarea
-                    id="observacao"
-                    maxlength="1000"
-                    placeholder="Conteúdo ministrado, ocorrências ou detalhes importantes"
-                  ></textarea>
-                </div>
+              </form>
+            </article>
+            <article class="hc-card">
+              <h2>Últimos registros</h2>
+              <div id="ultimosRegistros" class="hc-grid">
+                <p class="hc-muted">Carregando...</p>
               </div>
-              <div class="hc-actions">
-                <button id="btnPonto" class="hc-btn primary" type="submit">
-                  Registrar entrada</button
-                ><a class="hc-btn secondary" th:href="@{/ponto}"
-                  >Ver histórico</a
-                >
+            </article>
+          </section>
+        </div>
+
+        <div id="painelAdmin" hidden>
+          <section class="hc-grid three" aria-label="Resumo administrativo">
+            <article class="hc-card hc-stat">
+              <span class="hc-muted">Usuários ativos</span>
+              <strong id="adminUsuariosAtivos">—</strong>
+              <small class="hc-muted">Contas com acesso ao sistema</small>
+            </article>
+            <article class="hc-card hc-stat">
+              <span class="hc-muted">Cursos ativos</span>
+              <strong id="adminCursosAtivos">—</strong>
+              <small class="hc-muted">Cursos disponíveis para gestão</small>
+            </article>
+            <article class="hc-card hc-stat">
+              <span class="hc-muted">Turmas ativas</span>
+              <strong id="adminTurmasAtivas">—</strong>
+              <small class="hc-muted">Turmas em acompanhamento</small>
+            </article>
+          </section>
+          <section class="hc-card" style="margin-top: 20px">
+            <div class="hc-section-head">
+              <div>
+                <h2>Controle do sistema</h2>
+                <p class="hc-muted">
+                  Acesse os cadastros, vínculos e relatórios administrativos.
+                </p>
               </div>
-            </form>
-          </article>
-          <article class="hc-card">
-            <h2>Últimos registros</h2>
-            <div id="ultimosRegistros" class="hc-grid">
-              <p class="hc-muted">Carregando...</p>
             </div>
-          </article>
-        </section>
+            <nav class="hc-admin-actions" aria-label="Atalhos administrativos">
+              <a class="hc-management-item" th:href="@{/usuarios}">
+                <span class="hc-admin-link-icon"><i class="fi fi-rr-users" aria-hidden="true"></i></span>
+                <span class="hc-admin-action-copy"><strong>Usuários</strong><small>Perfis, acessos e vínculos</small></span>
+              </a>
+              <a class="hc-management-item" th:href="@{/gestao-turmas}">
+                <span class="hc-admin-link-icon"><i class="fi fi-rr-graduation-cap" aria-hidden="true"></i></span>
+                <span class="hc-admin-action-copy"><strong>Cursos e turmas</strong><small>Cadastros e cargas horárias</small></span>
+              </a>
+              <a class="hc-management-item" th:href="@{/relatorios}">
+                <span class="hc-admin-link-icon"><i class="fi fi-rr-document" aria-hidden="true"></i></span>
+                <span class="hc-admin-action-copy"><strong>Relatórios</strong><small>Consulta e exportação em PDF</small></span>
+              </a>
+              <a class="hc-management-item" th:href="@{/configuracoes}">
+                <span class="hc-admin-link-icon"><i class="fi fi-rr-settings" aria-hidden="true"></i></span>
+                <span class="hc-admin-action-copy"><strong>Configurações</strong><small>Conta, tema e preferências</small></span>
+              </a>
+            </nav>
+            <p class="hc-muted" id="adminPainelErro" role="status" hidden></p>
+          </section>
+        </div>
       </main>
     </div>
-    <script th:src="@{/js/app.js}"></script>
-    <script th:src="@{/js/MeuPerfil.js}"></script>
+    <script th:src="@{/js/app.js(v=8)}"></script>
+    <script th:src="@{/js/MeuPerfil.js(v=8)}"></script>
   </body>
 </html>

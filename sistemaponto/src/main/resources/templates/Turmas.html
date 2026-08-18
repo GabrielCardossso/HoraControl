@@ -7,7 +7,7 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>Turmas - HoraControl</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <link rel="stylesheet" th:href="@{/css/app.css(v=8)}" />
   </head>
   <body class="hc-app">
     <div class="hc-shell">
@@ -19,20 +19,18 @@
             alt="Senac"
         /></a>
         <nav class="hc-nav">
-          <a th:href="@{/perfil}">⌂ <span>Painel</span></a
-          ><a th:href="@{/ponto}">▷ <span>Meu ponto</span></a
-          ><a th:href="@{/relatorios}">▤ <span>Relatórios</span></a
+          <a th:href="@{/perfil}"><i class="fi fi-rr-home" aria-hidden="true"></i><span>Painel</span></a
+          ><a th:href="@{/ponto}"><i class="fi fi-rr-time-check" aria-hidden="true"></i><span>Meu ponto</span></a
+          ><a th:href="@{/relatorios}"><i class="fi fi-rr-document" aria-hidden="true"></i><span>Relatórios</span></a
           ><a th:href="@{/gestao-turmas}" aria-current="page"
-            >▦ <span>Turmas</span></a
-          ><a th:href="@{/usuarios}">♙ <span>Usuários</span></a
-          ><a th:href="@{/configuracoes}">⚙ <span>Configurações</span></a>
+            ><i class="fi fi-rr-graduation-cap" aria-hidden="true"></i><span>Turmas</span></a
+          ><a th:href="@{/usuarios}"><i class="fi fi-rr-users" aria-hidden="true"></i><span>Usuários</span></a
+          ><a th:href="@{/configuracoes}"><i class="fi fi-rr-settings" aria-hidden="true"></i><span>Configurações</span></a>
         </nav>
         <div class="hc-sidebar-footer">
-          <button type="button" class="hc-btn secondary" data-theme-toggle>
-            ◐
-          </button>
+          <button type="button" class="hc-btn secondary" data-theme-toggle></button>
           <form th:action="@{/logout}" method="post">
-            <button class="hc-logout">Sair</button>
+            <button class="hc-logout"><i class="fi fi-rr-sign-out-alt" aria-hidden="true"></i>Sair</button>
           </form>
         </div>
       </aside>
@@ -53,11 +51,11 @@
                 <p class="hc-muted">Todos os cursos cadastrados no sistema.</p>
               </div>
               <button class="hc-btn primary" type="button" id="novoCurso">
-                + Cadastrar curso
+                Cadastrar curso
               </button>
             </div>
             <div class="hc-filter-toolbar">
-              <button class="hc-btn secondary" type="button" data-filter-toggle aria-expanded="false">
+              <button class="hc-btn secondary" type="button" data-filter-toggle aria-expanded="false" aria-controls="modalFiltrosCursos">
                 Filtros
                 <span class="hc-filter-active-badge" data-filter-active-badge hidden>Ativos</span>
               </button>
@@ -65,8 +63,13 @@
                 Limpar filtros
               </button>
             </div>
-            <div class="hc-filter-panel" data-filter-panel hidden>
-              <form id="formFiltrosCursos">
+            <div class="hc-modal hc-filter-modal" id="modalFiltrosCursos" data-filter-panel role="dialog" aria-modal="true" aria-labelledby="tituloFiltrosCursos" hidden>
+              <div class="hc-modal-panel">
+                <div class="hc-modal-head">
+                  <h2 id="tituloFiltrosCursos">Filtrar cursos</h2>
+                  <button class="hc-btn secondary" type="button" data-filter-close>Fechar</button>
+                </div>
+                <form id="formFiltrosCursos">
                 <div class="hc-form-grid">
                   <div class="hc-field">
                     <label for="filtroCursoBusca">Código ou nome</label>
@@ -93,7 +96,8 @@
                   <button class="hc-btn primary" type="submit">Aplicar filtros</button>
                   <button class="hc-btn secondary" type="button" data-limpar-cursos>Limpar filtros</button>
                 </div>
-              </form>
+                </form>
+              </div>
             </div>
             <div id="listaCursos" class="hc-management-list">
               <p class="hc-muted">Carregando...</p>
@@ -107,11 +111,11 @@
                 <p class="hc-muted">Todas as turmas, ativas e inativas.</p>
               </div>
               <button class="hc-btn primary" type="button" id="novaTurma">
-                + Cadastrar turma
+                Cadastrar turma
               </button>
             </div>
             <div class="hc-filter-toolbar">
-              <button class="hc-btn secondary" type="button" data-filter-toggle aria-expanded="false">
+              <button class="hc-btn secondary" type="button" data-filter-toggle aria-expanded="false" aria-controls="modalFiltrosTurmas">
                 Filtros
                 <span class="hc-filter-active-badge" data-filter-active-badge hidden>Ativos</span>
               </button>
@@ -119,8 +123,13 @@
                 Limpar filtros
               </button>
             </div>
-            <div class="hc-filter-panel" data-filter-panel hidden>
-              <form id="formFiltrosTurmas">
+            <div class="hc-modal hc-filter-modal" id="modalFiltrosTurmas" data-filter-panel role="dialog" aria-modal="true" aria-labelledby="tituloFiltrosTurmas" hidden>
+              <div class="hc-modal-panel">
+                <div class="hc-modal-head">
+                  <h2 id="tituloFiltrosTurmas">Filtrar turmas</h2>
+                  <button class="hc-btn secondary" type="button" data-filter-close>Fechar</button>
+                </div>
+                <form id="formFiltrosTurmas">
                 <div class="hc-form-grid">
                   <div class="hc-field">
                     <label for="filtroTurmaBusca">Código ou nome</label>
@@ -170,7 +179,8 @@
                   <button class="hc-btn primary" type="submit">Aplicar filtros</button>
                   <button class="hc-btn secondary" type="button" data-limpar-turmas>Limpar filtros</button>
                 </div>
-              </form>
+                </form>
+              </div>
             </div>
             <div class="hc-table-wrap">
               <table class="hc-table">
@@ -320,7 +330,7 @@
       </div>
     </div>
 
-    <script th:src="@{/js/app.js}"></script>
-    <script th:src="@{/js/Turmas.js}"></script>
+    <script th:src="@{/js/app.js(v=8)}"></script>
+    <script th:src="@{/js/Turmas.js(v=8)}"></script>
   </body>
 </html>

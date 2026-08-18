@@ -36,14 +36,14 @@ public class RelatorioService {
       com.lowagie.text.Font headerFont = new com.lowagie.text.Font(base, 8, com.lowagie.text.Font.BOLD, Color.WHITE);
       document.add(new Paragraph(titulo, titleFont));
       document.add(new Paragraph(
-          "Registros: " + registros.size() + "   |   Total de horas: " + totalHoras(registros),
+          "Registros: " + registros.size() + "   |   Total de horas: " + formatarDuracao(totalMinutos(registros)),
           new com.lowagie.text.Font(base, 10, com.lowagie.text.Font.NORMAL, Color.DARK_GRAY)));
       document.add(new Paragraph("Gerado em " + LocalDateTime.now().format(DATA_HORA), body));
       document.add(Chunk.NEWLINE);
 
       PdfPTable table = new PdfPTable(new float[] { 2.2f, 1.7f, 1.2f, 1.6f, 1.6f, .8f, 2.5f });
       table.setWidthPercentage(100);
-      String[] headers = { "Professor", "Turma", "Código", "Entrada", "Saída", "Horas", "Observação" };
+      String[] headers = { "Professor", "Turma", "Código", "Entrada", "Saída", "Horas", "Observação/ajuste" };
       for (String header : headers)
         table.addCell(celula(header, headerFont, new Color(75, 71, 153)));
       for (RegistroPonto registro : registros) {
@@ -55,8 +55,8 @@ public class RelatorioService {
         table.addCell(celula(registro.getEntrada().format(DATA_HORA), body, Color.WHITE));
         table.addCell(celula(registro.getSaida() == null ? "Em aberto" : registro.getSaida().format(DATA_HORA), body,
             Color.WHITE));
-        table.addCell(celula(registro.getHorasTrabalhadas().toPlainString(), body, Color.WHITE));
-        table.addCell(celula(texto(registro.getObservacao()), body, Color.WHITE));
+        table.addCell(celula(formatarDuracao(registro.getMinutosTrabalhados()), body, Color.WHITE));
+        table.addCell(celula(observacaoRelatorio(registro), body, Color.WHITE));
       }
       document.add(table);
       document.close();
@@ -67,12 +67,29 @@ public class RelatorioService {
   }
 
   public BigDecimal totalHoras(List<RegistroPonto> registros) {
-    long minutos = registros.stream().mapToLong(RegistroPonto::getMinutosTrabalhados).sum();
+    long minutos = totalMinutos(registros);
     return BigDecimal.valueOf(minutos).divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
+  }
+
+  public String formatarDuracao(long minutos) {
+    long total = Math.max(0, minutos);
+    return String.format("%02dh%02dm", total / 60, total % 60);
+  }
+
+  private long totalMinutos(List<RegistroPonto> registros) {
+    return registros.stream().mapToLong(RegistroPonto::getMinutosTrabalhados).sum();
   }
 
   private String texto(String valor) {
     return valor == null ? "" : valor;
+  }
+
+  private String observacaoRelatorio(RegistroPonto registro) {
+    String observacao = texto(registro.getObservacao());
+    if (!registro.isAjustado())
+      return observacao;
+    String motivo = texto(registro.getJustificativaAjuste());
+    return observacao + (observacao.isBlank() ? "" : " | ") + "Motivo do ajuste: " + motivo;
   }
 
   private PdfPCell celula(String texto, com.lowagie.text.Font font, Color fundo) {

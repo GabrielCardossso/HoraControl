@@ -31,6 +31,8 @@ class RelatorioServiceTest {
     List<RegistroPonto> registros = List.of(registro);
 
     assertThat(service.totalHoras(registros)).isEqualByComparingTo("2.50");
+    assertThat(service.formatarDuracao(44)).isEqualTo("00h44m");
+    assertThat(service.formatarDuracao(150)).isEqualTo("02h30m");
 
     byte[] pdf = service.gerarPdf(registros, "Relatório de teste");
     PdfReader reader = new PdfReader(pdf);

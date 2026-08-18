@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tbody.innerHTML = lista
       .map(
         (u) =>
-          `<tr><td><strong>${esc(u.nome)}</strong></td><td>${esc(u.matricula || "—")}</td><td>${esc(u.email)}</td><td>${esc((u.perfil || "").replaceAll("_", " "))}</td><td>${esc(u.cursoResponsavel?.nome || (["ADMIN", "COORDENADOR_EIXO", "COORDENADOR_NUCLEO"].includes(u.perfil) ? "Geral" : "Próprio"))}</td><td><span class="hc-status ${u.ativo ? "closed" : "open"}">${u.ativo ? "Ativo" : "Inativo"}</span></td><td><button class="hc-btn secondary" data-editar="${u.id}">Editar</button></td></tr>`,
+          `<tr><td data-label="Nome"><strong>${esc(u.nome)}</strong></td><td data-label="Matrícula">${esc(u.matricula || "—")}</td><td data-label="E-mail">${esc(u.email)}</td><td data-label="Perfil">${esc((u.perfil || "").replaceAll("_", " "))}</td><td data-label="Curso/escopo">${esc(u.cursoResponsavel?.nome || (["ADMIN", "COORDENADOR_EIXO", "COORDENADOR_NUCLEO"].includes(u.perfil) ? "Geral" : "Próprio"))}</td><td data-label="Status"><span class="hc-status ${u.ativo ? "closed" : "open"}">${u.ativo ? "Ativo" : "Inativo"}</span></td><td data-label="Ações"><button class="hc-btn secondary" data-editar="${u.id}"><i class="fi fi-rr-edit" aria-hidden="true"></i>Editar</button></td></tr>`,
       )
       .join("");
   }

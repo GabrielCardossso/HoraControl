@@ -90,12 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderResumo(registros) {
     const fechados = registros.filter((r) => r.status === "FECHADO");
-    const horas = fechados.reduce(
-      (s, r) => s + Number(r.horasTrabalhadas || 0),
+    const minutos = fechados.reduce(
+      (s, r) => s + hcMinutesFromRecord(r),
       0,
     );
     document.getElementById("horasMes").textContent =
-      `${horas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} h`;
+      hcFormatMinutes(minutos);
   }
 
   function renderUltimos(registros) {
@@ -114,6 +114,36 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>`,
       )
       .join("");
+  }
+
+  async function carregarPainelAdmin() {
+    try {
+      const [usuariosRes, cursosRes, turmasRes] = await Promise.all([
+        hcFetch("/api/admin/usuarios"),
+        hcFetch("/api/cursos/todos"),
+        hcFetch("/api/turmas/todas"),
+      ]);
+      const [usuarios, cursos, turmas] = await Promise.all([
+        usuariosRes.json(),
+        cursosRes.json(),
+        turmasRes.json(),
+      ]);
+      document.getElementById("adminUsuariosAtivos").textContent = usuarios.filter(
+        (item) => item.ativo,
+      ).length;
+      document.getElementById("adminCursosAtivos").textContent = cursos.filter(
+        (item) => item.ativo,
+      ).length;
+      document.getElementById("adminTurmasAtivas").textContent = turmas.filter(
+        (item) => item.ativo,
+      ).length;
+    } catch (error) {
+      const feedback = document.getElementById("adminPainelErro");
+      feedback.hidden = false;
+      feedback.textContent =
+        "Não foi possível atualizar o resumo agora. Os atalhos continuam disponíveis.";
+      hcToast(error.message, "error");
+    }
   }
 
   form.addEventListener("submit", async (e) => {
@@ -150,16 +180,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document.addEventListener("hc:user-ready", (e) => {
-    if (e.detail.perfil !== "ADMIN") return;
-    document.getElementById("cardUltimosRegistros").hidden = true;
-    document.getElementById("painelPonto").classList.add("single");
-  });
+  let painelInicializado = false;
+  function configurarPainel(usuario) {
+    if (painelInicializado) return;
+    painelInicializado = true;
+    const admin = usuario.perfil === "ADMIN";
+    document.getElementById("painelAdmin").hidden = !admin;
+    document.getElementById("painelProfessor").hidden = admin;
+    if (admin) {
+      document.getElementById("tituloPainel").textContent =
+        "Painel administrativo";
+      document.getElementById("descricaoPainel").textContent =
+        "Acompanhe os cadastros e acesse os controles do sistema.";
+      carregarPainelAdmin();
+    } else {
+      carregar();
+    }
+  }
+
+  document.addEventListener("hc:user-ready", (e) => configurarPainel(e.detail));
+  if (window.hcUser) configurarPainel(window.hcUser);
 
   function esc(value) {
     const d = document.createElement("div");
     d.textContent = value ?? "";
     return d.innerHTML;
   }
-  carregar();
 });

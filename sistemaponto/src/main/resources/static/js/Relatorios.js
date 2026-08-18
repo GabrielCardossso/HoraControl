@@ -53,19 +53,19 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const r = await hcFetch(`/api/registros?${parametrosAplicados}`),
         lista = await r.json();
-      const horas = lista.reduce(
-        (s, x) => s + Number(x.horasTrabalhadas || 0),
+      const minutos = lista.reduce(
+        (s, x) => s + hcMinutesFromRecord(x),
         0,
       );
       document.getElementById("previewRegistros").textContent = lista.length;
       document.getElementById("previewHoras").textContent =
-        `${horas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} h`;
+        hcFormatMinutes(minutos);
       tb.innerHTML = lista.length
         ? lista
             .slice(0, 50)
             .map(
               (x) =>
-                `<tr><td>${esc(x.professor.nome)}</td><td>${esc(x.turma ? `${x.turma.codigo} - ${x.turma.nome}` : x.descricao || "Extra")}</td><td>${data.format(new Date(x.entrada))}</td><td>${Number(x.horasTrabalhadas || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${esc(x.status)}</td></tr>`,
+                `<tr><td data-label="Professor">${esc(x.professor.nome)}</td><td data-label="Código/turma">${esc(x.turma ? `${x.turma.codigo} - ${x.turma.nome}` : x.descricao || "Extra")}</td><td data-label="Data">${data.format(new Date(x.entrada))}</td><td data-label="Horas">${hcFormatMinutes(hcMinutesFromRecord(x))}</td><td data-label="Status">${esc(x.status)}</td></tr>`,
             )
             .join("")
         : '<tr><td colspan="5" class="hc-empty">Nenhum registro encontrado.</td></tr>';

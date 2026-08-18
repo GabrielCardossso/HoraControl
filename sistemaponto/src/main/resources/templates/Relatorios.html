@@ -7,7 +7,7 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>Relatórios - HoraControl</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <link rel="stylesheet" th:href="@{/css/app.css(v=8)}" />
   </head>
   <body class="hc-app">
     <div class="hc-shell">
@@ -19,18 +19,18 @@
             alt="Senac"
         /></a>
         <nav class="hc-nav">
-          <a th:href="@{/perfil}">⌂ <span>Painel</span></a>
-          <a th:href="@{/ponto}">◷ <span>Meu ponto</span></a>
+          <a th:href="@{/perfil}"><i class="fi fi-rr-home" aria-hidden="true"></i><span>Painel</span></a>
+          <a th:href="@{/ponto}"><i class="fi fi-rr-time-check" aria-hidden="true"></i><span>Meu ponto</span></a>
           <a th:href="@{/relatorios}" aria-current="page"
-            >▤ <span>Relatórios</span></a
+            ><i class="fi fi-rr-document" aria-hidden="true"></i><span>Relatórios</span></a
           >
           <a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden
-            >▦ <span>Turmas</span></a
+            ><i class="fi fi-rr-graduation-cap" aria-hidden="true"></i><span>Turmas</span></a
           >
           <a th:href="@{/usuarios}" data-role="ADMIN" hidden
-            >♙ <span>Usuários</span></a
+            ><i class="fi fi-rr-users" aria-hidden="true"></i><span>Usuários</span></a
           >
-          <a th:href="@{/configuracoes}">⚙ <span>Configurações</span></a>
+          <a th:href="@{/configuracoes}"><i class="fi fi-rr-settings" aria-hidden="true"></i><span>Configurações</span></a>
         </nav>
         <div class="hc-sidebar-footer">
           <button
@@ -38,11 +38,9 @@
             class="hc-btn secondary"
             data-theme-toggle
             aria-label="Alterar tema"
-          >
-            ◐
-          </button>
+          ></button>
           <form th:action="@{/logout}" method="post">
-            <button class="hc-logout">Sair</button>
+            <button class="hc-logout"><i class="fi fi-rr-sign-out-alt" aria-hidden="true"></i>Sair</button>
           </form>
         </div>
       </aside>
@@ -54,38 +52,62 @@
             <p>Gere o relatório administrativo de registros em PDF.</p>
           </div>
         </header>
-        <section class="hc-grid two">
-          <article class="hc-card" id="filtrosRelatorio" data-filter-root>
-            <div class="hc-section-head">
-              <div><h2>Configurar relatório</h2></div>
-              <button type="button" class="hc-btn danger" id="baixarPdf">
-                Baixar PDF
-              </button>
-            </div>
-            <div class="hc-filter-toolbar">
-              <button
-                class="hc-btn secondary"
-                type="button"
-                data-filter-toggle
-                aria-expanded="false"
-              >
-                Filtros
-                <span class="hc-filter-active-badge" data-filter-active-badge hidden
-                  >Ativos</span
+        <section
+          class="hc-card hc-report-config"
+          id="filtrosRelatorio"
+          data-filter-root
+        >
+            <div class="hc-section-head hc-report-head">
+              <div>
+                <h2>Configurar relatório</h2>
+                <p class="hc-muted">
+                  Refine os registros exibidos e gere o documento em PDF.
+                </p>
+              </div>
+              <div class="hc-report-actions">
+                <button
+                  class="hc-btn secondary"
+                  type="button"
+                  data-filter-toggle
+                  aria-expanded="false"
+                  aria-controls="modalFiltrosRelatorio"
                 >
-              </button>
-              <button
-                class="hc-btn secondary"
-                type="button"
-                data-filter-clear-active
-                data-limpar-relatorio
-                hidden
-              >
-                Limpar filtros
-              </button>
+                  Filtros
+                  <span class="hc-filter-active-badge" data-filter-active-badge hidden
+                    >Ativos</span
+                  >
+                </button>
+                <button
+                  class="hc-btn secondary"
+                  type="button"
+                  data-filter-clear-active
+                  data-limpar-relatorio
+                  hidden
+                >
+                  Limpar filtros
+                </button>
+                <button type="button" class="hc-btn danger" id="baixarPdf">
+                  Baixar PDF
+                </button>
+              </div>
             </div>
-            <div class="hc-filter-panel" data-filter-panel hidden>
-              <form id="formRelatorio">
+            <div
+              class="hc-modal hc-filter-modal"
+              id="modalFiltrosRelatorio"
+              data-filter-panel
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="tituloFiltrosRelatorio"
+              hidden
+            >
+              <div class="hc-modal-panel">
+                <div class="hc-modal-head">
+                  <h2 id="tituloFiltrosRelatorio">Filtrar relatório</h2>
+                  <button class="hc-btn secondary" type="button" data-filter-close>
+                    Fechar
+                  </button>
+                </div>
+                <form id="formRelatorio">
               <div class="hc-form-grid">
                 <div class="hc-field">
                   <label for="inicioRelatorio">Data inicial</label>
@@ -139,22 +161,38 @@
                   Limpar filtros
                 </button>
               </div>
-              </form>
-            </div>
-          </article>
-          <article class="hc-card">
-            <h2>Resumo da prévia</h2>
-            <div class="hc-grid">
-              <div class="hc-stat">
-                <span class="hc-muted">Registros encontrados</span
-                ><strong id="previewRegistros">0</strong>
-              </div>
-              <div class="hc-stat">
-                <span class="hc-muted">Horas fechadas</span
-                ><strong id="previewHoras">0,00 h</strong>
+                </form>
               </div>
             </div>
-          </article>
+            <div class="hc-report-summary" aria-label="Resumo da prévia">
+              <div class="hc-report-stat">
+                <span class="hc-report-stat-icon" aria-hidden="true">
+                  <i class="fi fi-rr-document"></i>
+                </span>
+                <span>
+                  <small>Registros encontrados</small>
+                  <strong id="previewRegistros">0</strong>
+                </span>
+              </div>
+              <div class="hc-report-stat">
+                <span class="hc-report-stat-icon" aria-hidden="true">
+                  <i class="fi fi-rr-clock"></i>
+                </span>
+                <span>
+                  <small>Horas fechadas</small>
+                  <strong id="previewHoras">00h00m</strong>
+                </span>
+              </div>
+              <div class="hc-report-stat">
+                <span class="hc-report-stat-icon" aria-hidden="true">
+                  <i class="fi fi-rr-file-pdf"></i>
+                </span>
+                <span>
+                  <small>Formato de exportação</small>
+                  <strong>PDF</strong>
+                </span>
+              </div>
+            </div>
         </section>
         <section class="hc-card" style="margin-top: 20px">
           <h2>Prévia</h2>
@@ -179,7 +217,7 @@
         </section>
       </main>
     </div>
-    <script th:src="@{/js/app.js}"></script>
-    <script th:src="@{/js/Relatorios.js}"></script>
+    <script th:src="@{/js/app.js(v=8)}"></script>
+    <script th:src="@{/js/Relatorios.js(v=8)}"></script>
   </body>
 </html>

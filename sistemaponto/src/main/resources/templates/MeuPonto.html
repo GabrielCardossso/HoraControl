@@ -7,7 +7,7 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>Registros de ponto - HoraControl</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <link rel="stylesheet" th:href="@{/css/app.css(v=8)}" />
   </head>
   <body class="hc-app">
     <div class="hc-shell">
@@ -19,23 +19,21 @@
             alt="Senac"
         /></a>
         <nav class="hc-nav">
-          <a th:href="@{/perfil}">⌂ <span>Painel</span></a
+          <a th:href="@{/perfil}"><i class="fi fi-rr-home" aria-hidden="true"></i><span>Painel</span></a
           ><a th:href="@{/ponto}" aria-current="page"
-            >◷ <span>Meu ponto</span></a
+            ><i class="fi fi-rr-time-check" aria-hidden="true"></i><span>Meu ponto</span></a
           ><a th:href="@{/relatorios}" data-role="ADMIN" hidden
-            >▤ <span>Relatórios</span></a
+            ><i class="fi fi-rr-document" aria-hidden="true"></i><span>Relatórios</span></a
           ><a th:href="@{/gestao-turmas}" data-role="ADMIN" hidden
-            >▦ <span>Turmas</span></a
+            ><i class="fi fi-rr-graduation-cap" aria-hidden="true"></i><span>Turmas</span></a
           ><a th:href="@{/usuarios}" data-role="ADMIN" hidden
-            >♙ <span>Usuários</span></a
-          ><a th:href="@{/configuracoes}">⚙ <span>Configurações</span></a>
+            ><i class="fi fi-rr-users" aria-hidden="true"></i><span>Usuários</span></a
+          ><a th:href="@{/configuracoes}"><i class="fi fi-rr-settings" aria-hidden="true"></i><span>Configurações</span></a>
         </nav>
         <div class="hc-sidebar-footer">
-          <button type="button" class="hc-btn secondary" data-theme-toggle>
-            ◐
-          </button>
+          <button type="button" class="hc-btn secondary" data-theme-toggle></button>
           <form th:action="@{/logout}" method="post">
-            <button class="hc-logout">Sair</button>
+            <button class="hc-logout"><i class="fi fi-rr-sign-out-alt" aria-hidden="true"></i>Sair</button>
           </form>
         </div>
       </aside>
@@ -45,95 +43,14 @@
             <h1>Registros de ponto</h1>
             <p>Consulte horas, turmas e observações.</p>
           </div>
-          <a class="hc-btn primary" th:href="@{/perfil}">Registrar ponto</a>
+          <a
+            class="hc-btn primary"
+            th:href="@{/perfil}"
+            data-hide-role="ADMIN"
+            hidden
+            >Registrar ponto</a
+          >
         </header>
-        <section class="hc-card" id="filtrosRegistros" data-filter-root>
-          <div class="hc-filter-toolbar">
-            <button
-              class="hc-btn secondary"
-              type="button"
-              data-filter-toggle
-              aria-expanded="false"
-            >
-              Filtros
-              <span class="hc-filter-active-badge" data-filter-active-badge hidden
-                >Ativos</span
-              >
-            </button>
-            <button
-              class="hc-btn secondary"
-              type="button"
-              data-filter-clear-active
-              data-limpar-registros
-              hidden
-            >
-              Limpar filtros
-            </button>
-          </div>
-          <div class="hc-filter-panel" data-filter-panel hidden>
-            <form id="formFiltros">
-            <div class="hc-form-grid">
-              <div class="hc-field">
-                <label for="periodoRapido">Período</label
-                ><select id="periodoRapido">
-                  <option value="mes">Este mês</option>
-                  <option value="semana">Esta semana</option>
-                  <option value="hoje">Hoje</option>
-                  <option value="30dias">Últimos 30 dias</option>
-                  <option value="custom">Personalizado</option>
-                  <option value="todos" selected>Todos</option>
-                </select>
-              </div>
-              <div class="hc-field">
-                <label for="professorId">Professor</label
-                ><select id="professorId">
-                  <option value="">Todos permitidos</option>
-                </select>
-              </div>
-              <div class="hc-field">
-                <label for="inicio">Data inicial</label
-                ><input type="date" id="inicio" />
-              </div>
-              <div class="hc-field">
-                <label for="fim">Data final</label
-                ><input type="date" id="fim" />
-              </div>
-              <div class="hc-field">
-                <label for="turmaFiltro">Turma</label
-                ><select id="turmaFiltro">
-                  <option value="">Todas</option>
-                </select>
-              </div>
-              <div class="hc-field">
-                <label for="statusFiltro">Status</label
-                ><select id="statusFiltro">
-                  <option value="">Todos</option>
-                  <option value="ABERTO">Aberto</option>
-                  <option value="FECHADO">Fechado</option>
-                </select>
-              </div>
-              <div class="hc-field full">
-                <label for="busca">Busca</label
-                ><input
-                  id="busca"
-                  placeholder="Professor, código da turma, atividade ou observação"
-                />
-              </div>
-            </div>
-            <div class="hc-actions">
-              <button class="hc-btn primary" type="submit">
-                Aplicar filtros</button
-              ><button
-                class="hc-btn secondary"
-                type="button"
-                data-limpar-registros
-              >
-                Limpar filtros
-              </button>
-            </div>
-            </form>
-          </div>
-        </section>
         <section class="hc-grid two" style="margin-top: 20px">
           <article class="hc-card hc-stat">
             <span class="hc-muted">Registros</span
@@ -141,10 +58,126 @@
           </article>
           <article class="hc-card hc-stat">
             <span class="hc-muted">Horas trabalhadas</span
-            ><strong id="totalHoras">0,00 h</strong>
+            ><strong id="totalHoras">00h00m</strong>
           </article>
         </section>
-        <section class="hc-card" style="margin-top: 20px">
+        <section
+          class="hc-card"
+          id="filtrosRegistros"
+          data-filter-root
+          style="margin-top: 20px"
+        >
+          <div class="hc-section-head">
+            <div>
+              <h2>Registros</h2>
+              <p class="hc-muted">Consulte e ajuste os pontos encontrados.</p>
+            </div>
+            <div class="hc-filter-toolbar">
+              <button
+                class="hc-btn secondary"
+                type="button"
+                data-filter-toggle
+                aria-expanded="false"
+                aria-controls="modalFiltrosRegistros"
+              >
+                Filtros
+                <span
+                  class="hc-filter-active-badge"
+                  data-filter-active-badge
+                  hidden
+                  >Ativos</span
+                >
+              </button>
+              <button
+                class="hc-btn secondary"
+                type="button"
+                data-filter-clear-active
+                data-limpar-registros
+                hidden
+              >
+                Limpar filtros
+              </button>
+            </div>
+          </div>
+          <div
+            class="hc-modal hc-filter-modal"
+            id="modalFiltrosRegistros"
+            data-filter-panel
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloFiltrosRegistros"
+            hidden
+          >
+            <div class="hc-modal-panel">
+              <div class="hc-modal-head">
+                <h2 id="tituloFiltrosRegistros">Filtrar registros</h2>
+                <button class="hc-btn secondary" type="button" data-filter-close>
+                  Fechar
+                </button>
+              </div>
+              <form id="formFiltros">
+                <div class="hc-form-grid">
+                  <div class="hc-field">
+                    <label for="periodoRapido">Período</label
+                    ><select id="periodoRapido">
+                      <option value="mes">Este mês</option>
+                      <option value="semana">Esta semana</option>
+                      <option value="hoje">Hoje</option>
+                      <option value="30dias">Últimos 30 dias</option>
+                      <option value="custom">Personalizado</option>
+                      <option value="todos" selected>Todos</option>
+                    </select>
+                  </div>
+                  <div class="hc-field">
+                    <label for="professorId">Professor</label
+                    ><select id="professorId">
+                      <option value="">Todos permitidos</option>
+                    </select>
+                  </div>
+                  <div class="hc-field">
+                    <label for="inicio">Data inicial</label
+                    ><input type="date" id="inicio" />
+                  </div>
+                  <div class="hc-field">
+                    <label for="fim">Data final</label
+                    ><input type="date" id="fim" />
+                  </div>
+                  <div class="hc-field">
+                    <label for="turmaFiltro">Turma</label
+                    ><select id="turmaFiltro">
+                      <option value="">Todas</option>
+                    </select>
+                  </div>
+                  <div class="hc-field">
+                    <label for="statusFiltro">Status</label
+                    ><select id="statusFiltro">
+                      <option value="">Todos</option>
+                      <option value="ABERTO">Aberto</option>
+                      <option value="FECHADO">Fechado</option>
+                    </select>
+                  </div>
+                  <div class="hc-field full">
+                    <label for="busca">Busca</label
+                    ><input
+                      id="busca"
+                      placeholder="Professor, código da turma, atividade ou observação"
+                    />
+                  </div>
+                </div>
+                <div class="hc-actions">
+                  <button class="hc-btn primary" type="submit">
+                    Aplicar filtros</button
+                  ><button
+                    class="hc-btn secondary"
+                    type="button"
+                    data-limpar-registros
+                  >
+                    Limpar filtros
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
           <div class="hc-table-wrap">
             <table class="hc-table">
               <thead>
@@ -156,7 +189,7 @@
                   <th>Horas</th>
                   <th>Status</th>
                   <th>Observação</th>
-                  <th>Ação</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody id="corpoRegistros">
@@ -210,7 +243,78 @@
         </form>
       </div>
     </div>
-    <script th:src="@{/js/app.js}"></script>
-    <script th:src="@{/js/MeuPonto.js}"></script>
+    <div
+      class="hc-modal"
+      id="modalDetalhesRegistro"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tituloDetalhesRegistro"
+    >
+      <div class="hc-modal-panel" style="max-width: 680px">
+        <div class="hc-modal-head">
+          <h2 id="tituloDetalhesRegistro">Detalhes do registro</h2>
+          <button class="hc-btn secondary" type="button" data-fechar-detalhes>
+            Fechar
+          </button>
+        </div>
+        <dl class="hc-detail-list">
+          <div>
+            <dt>Professor</dt>
+            <dd id="detalheProfessor">—</dd>
+          </div>
+          <div>
+            <dt>Turma ou atividade</dt>
+            <dd id="detalheAtividade">—</dd>
+          </div>
+          <div>
+            <dt>Entrada</dt>
+            <dd id="detalheEntrada">—</dd>
+          </div>
+          <div>
+            <dt>Saída</dt>
+            <dd id="detalheSaida">—</dd>
+          </div>
+          <div>
+            <dt>Duração</dt>
+            <dd id="detalheDuracao">00h00m</dd>
+          </div>
+          <div>
+            <dt>Status</dt>
+            <dd id="detalheStatus">—</dd>
+          </div>
+        </dl>
+        <section class="hc-detail-text" aria-labelledby="tituloDetalheObservacao">
+          <h3 id="tituloDetalheObservacao">Observação do registro</h3>
+          <p id="detalheObservacao">Nenhuma observação informada.</p>
+        </section>
+        <section
+          class="hc-detail-text hc-adjustment-detail"
+          id="detalheAjuste"
+          aria-labelledby="tituloDetalheAjuste"
+          hidden
+        >
+          <h3 id="tituloDetalheAjuste">Informações do ajuste</h3>
+          <dl class="hc-detail-list">
+            <div class="full">
+              <dt>Motivo do ajuste</dt>
+              <dd id="detalheJustificativa">—</dd>
+            </div>
+            <div>
+              <dt>Ajustado por</dt>
+              <dd id="detalheAlteradoPor">—</dd>
+            </div>
+            <div>
+              <dt>Data do ajuste</dt>
+              <dd id="detalheDataAlteracao">—</dd>
+            </div>
+          </dl>
+        </section>
+        <p class="hc-muted" id="detalheSemAjuste">
+          Este registro não recebeu ajustes.
+        </p>
+      </div>
+    </div>
+    <script th:src="@{/js/app.js(v=8)}"></script>
+    <script th:src="@{/js/MeuPonto.js(v=8)}"></script>
   </body>
 </html>

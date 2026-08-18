@@ -10,7 +10,7 @@
       href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2216%22 fill=%22%23007acc%22/><text x=%2232%22 y=%2241%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 font-weight=%22700%22 fill=%22white%22>HC</text></svg>"
     />
     <link rel="stylesheet" th:href="@{/css/homepage.css}" />
-    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <link rel="stylesheet" th:href="@{/css/app.css(v=8)}" />
   </head>
 
   <body class="corpo-login-page">
@@ -91,9 +91,7 @@
       data-theme-toggle
       style="position: fixed; right: 18px; top: 18px; z-index: 10"
       aria-label="Alterar tema"
-    >
-      ◐
-    </button>
-    <script th:src="@{/js/app.js}"></script>
+    ></button>
+    <script th:src="@{/js/app.js(v=8)}"></script>
   </body>
 </html>
